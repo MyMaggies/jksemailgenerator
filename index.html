@@ -373,47 +373,22 @@
 
         .upload-section {
             background: #f0f4ff;
-            padding: 20px;
+            padding: 25px 30px;
             border-radius: 8px;
             margin-bottom: 30px;
-            border: 2px dashed #667eea;
+            border-left: 5px solid #667eea;
         }
 
         .upload-section h3 {
             color: #667eea;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            font-size: 1.3em;
         }
 
-        .file-input-wrapper {
-            position: relative;
-            display: inline-block;
-            width: 100%;
-        }
-
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: -9999px;
-        }
-
-        .file-input-label {
-            display: block;
-            padding: 12px 20px;
-            background: #667eea;
-            color: white;
-            text-align: center;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .file-input-label:hover {
-            background: #5568d3;
-        }
-
-        .file-name {
-            margin-top: 10px;
-            color: #666;
-            font-style: italic;
+        .upload-section p {
+            margin-bottom: 10px;
+            color: #333;
+            line-height: 1.6;
         }
     </style>
 </head>
@@ -431,15 +406,14 @@
         </nav>
 
         <main>
-            <!-- Upload Section -->
+            <!-- Instructions Section -->
             <div class="upload-section">
-                <h3>📋 Upload Class List</h3>
-                <p style="margin-bottom: 15px; color: #666;">Upload your classlist.xls file with columns: HOMEROOM, FULL NAME (or Name, Class, Gender)</p>
-                <div class="file-input-wrapper">
-                    <input type="file" id="classlist-upload" accept=".xls,.xlsx">
-                    <label for="classlist-upload" class="file-input-label">Choose Excel File (.xls or .xlsx)</label>
-                </div>
-                <div class="file-name" id="file-name">Upload classlist.xls or using sample data</div>
+                <h3>📋 Instructions</h3>
+                <p style="margin-bottom: 10px; color: #333;">1. Select the type of letter from the tabs above</p>
+                <p style="margin-bottom: 10px; color: #333;">2. Fill in the required information</p>
+                <p style="margin-bottom: 10px; color: #333;">3. Filter students by class (optional)</p>
+                <p style="margin-bottom: 10px; color: #333;">4. Select the students you want to send letters to</p>
+                <p style="margin-bottom: 10px; color: #333;">5. Click "Generate Letters" to download all PDFs in a zip file</p>
             </div>
 
             <!-- Bunking Class Form -->
@@ -600,7 +574,6 @@
         document.addEventListener('DOMContentLoaded', function() {
             initializeNavigation();
             initializeWorkTypeToggle();
-            initializeFileUpload();
             loadLetterhead(); // Load letterhead.png
             loadClasslistFromRepo(); // Try to load classlist.xls from repository
             initializeForms();
@@ -654,7 +627,7 @@
                     });
                     
                     populateStudentLists();
-                    document.getElementById('file-name').textContent = 'Loaded: classlist.xls from repository';
+                    console.log('Loaded classlist.xls from repository');
                 })
                 .catch(error => {
                     console.log('Could not load classlist.xls from repository, using sample data');
@@ -699,61 +672,6 @@
                     }
                 });
             });
-        }
-
-        // File upload functionality
-        function initializeFileUpload() {
-            const fileInput = document.getElementById('classlist-upload');
-            const fileName = document.getElementById('file-name');
-
-            fileInput.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    fileName.textContent = file.name;
-                    loadExcelFile(file);
-                }
-            });
-        }
-
-        // Load Excel file
-        function loadExcelFile(file) {
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                    
-                    studentsData = jsonData.map((row, index) => {
-                        // Handle both formats: HOMEROOM/FULL NAME and Name/Class/Gender
-                        let name = row['FULL NAME'] || row.Name || row.name || '';
-                        let className = row.HOMEROOM || row.Class || row.class || row.Grade || row.grade || '';
-                        let gender = row.Gender || row.gender || 'male';
-                        
-                        // Extract gender from name or class if needed (defaults to male for boys' school)
-                        if (typeof gender === 'string') {
-                            gender = gender.toLowerCase();
-                        }
-                        
-                        return {
-                            id: index + 1,
-                            name: name,
-                            class: className,
-                            gender: gender
-                        };
-                    });
-                    
-                    populateStudentLists();
-                    alert('Student data loaded successfully!');
-                } catch (error) {
-                    alert('Error reading Excel file. Please check the format.');
-                    console.error(error);
-                }
-            };
-            
-            reader.readAsArrayBuffer(file);
         }
 
         // Sample data
