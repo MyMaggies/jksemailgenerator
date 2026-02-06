@@ -977,9 +977,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;  // Lower start position to avoid header
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 60;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(16);
@@ -989,12 +989,12 @@
                 pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 25;
+                let y = topMargin + 20;
                 pdf.text(`Dear Parents of ${student.name}`, leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1010,7 +1010,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 6;
                 });
-                y += 10;
+                y += 8;
                 
                 const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
                 
@@ -1026,7 +1026,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 6;
                 });
-                y += 10;
+                y += 8;
                 
                 if (y > pageHeight - 100) {
                     pdf.addPage();
@@ -1036,7 +1036,7 @@
                     }
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 25;
+                y += 20;
                 
                 if (y > pageHeight - 80) {
                     pdf.addPage();
@@ -1090,20 +1090,20 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 60;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(11);
                 pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
-                let y = topMargin + 20;
+                let y = topMargin + 15;
                 pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 let bodyText;
                 if (formData.workType === 'homework') {
@@ -1124,7 +1124,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 6;
                 });
-                y += 15;
+                y += 10;
                 
                 if (y > pageHeight - 100) {
                     pdf.addPage();
@@ -1134,7 +1134,7 @@
                     }
                 }
                 pdf.text('Respectfully', leftMargin, y);
-                y += 25;
+                y += 20;
                 
                 if (y > pageHeight - 80) {
                     pdf.addPage();
@@ -1186,9 +1186,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 60;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(11);
@@ -1196,14 +1196,14 @@
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', pageWidth / 2, topMargin + 20, { align: 'center' });
+                pdf.text('Commendation', pageWidth / 2, topMargin + 15, { align: 'center' });
                 
                 pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 45;
+                let y = topMargin + 35;
                 pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
-                y += 20;
+                y += 15;
                 
                 const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
@@ -1219,7 +1219,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 6;
                 });
-                y += 15;
+                y += 10;
                 
                 if (y > pageHeight - 100) {
                     pdf.addPage();
@@ -1229,7 +1229,7 @@
                     }
                 }
                 pdf.text('Thank you.', leftMargin, y);
-                y += 25;
+                y += 20;
                 
                 if (y > pageHeight - 80) {
                     pdf.addPage();
