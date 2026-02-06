@@ -1000,7 +1000,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 100) {
+                    if (y > pageHeight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1016,7 +1016,7 @@
                 
                 const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > pageHeight - 100) {
+                    if (y > pageHeight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1028,7 +1028,7 @@
                 });
                 y += 8;
                 
-                if (y > pageHeight - 100) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1038,7 +1038,7 @@
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
                 y += 20;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1114,7 +1114,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 100) {
+                    if (y > pageheight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1126,7 +1126,7 @@
                 });
                 y += 10;
                 
-                if (y > pageHeight - 100) {
+                if (y > pageheight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1209,7 +1209,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 100) {
+                    if (y > pageheight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1221,7 +1221,7 @@
                 });
                 y += 10;
                 
-                if (y > pageHeight - 100) {
+                if (y > pageheight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
