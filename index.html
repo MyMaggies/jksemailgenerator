@@ -636,6 +636,12 @@
             </section>
         </main>
 
+        <footer style="text-align: center; padding: 30px 20px; color: #666; font-size: 0.9em; margin-top: 40px; border-top: 2px solid #ddd; background: #f9f9f9;">
+            <strong>© 2026 Teacher Email Generator. All Rights Reserved.</strong><br>
+            Proprietary software - Unauthorized use, copying, or distribution prohibited.<br>
+            <span style="font-size: 0.85em; color: #999;">Licensed for use by Jeddah Knowledge International School</span>
+        </footer>
+
         <div id="loading" class="loading-overlay">
             <div class="spinner"></div>
             <p>Generating letters...</p>
@@ -1036,6 +1042,7 @@
                 const subjectPronoun = student.gender === 'female' ? 'she' : 'he';
                 
                 const dateFormatted = formatDate(formData.dateOfIncident);
+                const letterDateFormatted = formatDate(formData.dateOfLetter);
                 
                 //Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
@@ -1045,15 +1052,19 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
+                // Add date at top right
+                pdf.setFontSize(12);
+                pdf.text(`Date: ${letterDateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
+                
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Bunking Class', pageWidth / 2, topMargin, { align: 'center' });
+                pdf.text('Bunking Class', pageWidth / 2, topMargin + 20, { align: 'center' });
                 
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 25;
-                pdf.text(`Dear Parents of ${student.name}`, leftMargin, y);
+                let y = topMargin + 45;
+                pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 15;
                 
                 pdf.text('Good day to you.', leftMargin, y);
@@ -1063,12 +1074,12 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 120) {
+                    if (y > pageHeight - 60) {
                         pdf.addPage();
-                        y = topMargin;
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                         }
+                        y = topMargin;
                     }
                     pdf.text(line, leftMargin, y);
                     y += 7;
@@ -1079,34 +1090,34 @@
                 
                 const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > pageHeight - 120) {
+                    if (y > pageHeight - 60) {
                         pdf.addPage();
-                        y = topMargin;
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                         }
+                        y = topMargin;
                     }
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
                 y += 10;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 
                 // Generate teacher level text
@@ -1169,11 +1180,12 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
+                // Add date at top right
                 pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
+                pdf.text(`Date: ${dateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
                 
                 let y = topMargin + 20;
-                pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
+                pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 15;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
@@ -1188,34 +1200,34 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 120) {
+                    if (y > pageHeight - 60) {
                         pdf.addPage();
-                        y = topMargin;
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                         }
+                        y = topMargin;
                     }
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
                 y += 15;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 pdf.text('Respectfully', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 
                 // Generate teacher level text
@@ -1276,8 +1288,9 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
+                // Add date at top right
                 pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
+                pdf.text(`Date: ${dateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
@@ -1287,41 +1300,41 @@
                 pdf.setFont(undefined, 'normal');
                 
                 let y = topMargin + 45;
-                pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
+                pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 20;
                 
                 const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 120) {
+                    if (y > pageHeight - 60) {
                         pdf.addPage();
-                        y = topMargin;
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                         }
+                        y = topMargin;
                     }
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
                 y += 15;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 pdf.text('Thank you.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 120) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
+                    y = topMargin;
                 }
                 
                 // Generate teacher level text
