@@ -647,11 +647,16 @@
                         };
                     });
                     
+                    console.log('Loaded students from repository:', studentsData.length);
+                    console.log('Sample student:', studentsData[0]);
+                    console.log('Sample classes:', studentsData.slice(0, 5).map(s => s.class));
+                    
                     populateStudentLists();
                     console.log('Loaded classlist.xls from repository');
                 })
                 .catch(error => {
                     console.log('Could not load classlist.xls from repository, using sample data');
+                    console.error('Error:', error);
                     useSampleData();
                 });
         }
@@ -697,6 +702,7 @@
 
         // Sample data
         function useSampleData() {
+            console.log('Using sample data (classlist.xls not found)');
             studentsData = [
                 { id: 1, name: 'Abdullah Fahad A Alsubaie', class: '9A', gender: 'male' },
                 { id: 2, name: 'Ahmed Mohamed Ali', class: '9A', gender: 'male' },
@@ -773,13 +779,18 @@
             // Extract unique grades from homerooms (e.g., "10" from "10.1 Boys")
             const grades = [...new Set(studentsData.map(s => {
                 const match = s.class.match(/^(\d+)/);
-                return match ? match[1] : '';
-            }).filter(g => g))].sort();
+                return match ? match[1] : null;
+            }).filter(g => g !== null))].sort();
+            
+            console.log('Extracted grades:', grades); // Debug log
+            console.log('All classes:', classes); // Debug log
             
             ['bunking', 'incomplete', 'commendation'].forEach(formType => {
                 // Populate grade filter
                 const gradeFilter = document.getElementById(`${formType}-grade-filter`);
                 gradeFilter.innerHTML = '<option value="">All Grades</option>';
+                
+                console.log(`Populating ${formType} grade filter with:`, grades);
                 
                 grades.forEach(grade => {
                     const option = document.createElement('option');
