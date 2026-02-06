@@ -1052,9 +1052,9 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                // Add date at top right
+                // Add date at top left
                 pdf.setFontSize(12);
-                pdf.text(`Date: ${letterDateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
+                pdf.text(`Date: ${letterDateFormatted}`, leftMargin, topMargin);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
@@ -1180,9 +1180,9 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                // Add date at top right
+                // Add date at top left
                 pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
+                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
@@ -1288,9 +1288,9 @@
                 const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                // Add date at top right
+                // Add date at top left
                 pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, pageWidth - rightMargin, topMargin, { align: 'right' });
+                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
