@@ -1,0 +1,1137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Email Generator</title>
+    
+    <!-- Include libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .email-type-nav {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .nav-btn {
+            flex: 1;
+            padding: 20px;
+            background: transparent;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            background: #e8e8e8;
+            color: #333;
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #667eea;
+        }
+
+        main {
+            padding: 40px 30px;
+        }
+
+        .form-section {
+            display: none;
+        }
+
+        .form-section.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h2 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 1.8em;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .work-type-toggle {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        .toggle-btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            font-size: 1em;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background: #f0f4ff;
+        }
+
+        .toggle-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .student-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin-bottom: 8px;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .student-item:hover {
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .student-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .student-item label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .student-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex: 1;
+        }
+
+        .student-class {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 10px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            z-index: 1000;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-overlay p {
+            color: white;
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .student-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .student-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .student-list::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .student-list::-webkit-scrollbar-thumb:hover {
+            background: #5568d3;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 1em;
+            }
+
+            main {
+                padding: 20px 15px;
+            }
+
+            .nav-btn {
+                padding: 15px 10px;
+                font-size: 0.95em;
+            }
+
+            h2 {
+                font-size: 1.5em;
+            }
+        }
+
+        .select-all-container {
+            margin-bottom: 10px;
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+        }
+
+        .select-all-container label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        .select-all-container input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            cursor: pointer;
+            accent-color: #667eea;
+        }
+
+        .upload-section {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 2px dashed #667eea;
+        }
+
+        .upload-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 12px 20px;
+            background: #667eea;
+            color: white;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-input-label:hover {
+            background: #5568d3;
+        }
+
+        .file-name {
+            margin-top: 10px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Teacher Email Generator</h1>
+            <p class="subtitle">Generate professional letters for students</p>
+        </header>
+
+        <nav class="email-type-nav">
+            <button class="nav-btn active" data-type="bunking">Bunking Class</button>
+            <button class="nav-btn" data-type="incomplete">Incomplete Work</button>
+            <button class="nav-btn" data-type="commendation">Commendation</button>
+        </nav>
+
+        <main>
+            <!-- Upload Section -->
+            <div class="upload-section">
+                <h3>📋 Upload Class List (Optional)</h3>
+                <p style="margin-bottom: 15px; color: #666;">Upload an Excel file (.xlsx) with columns: Name, Class, Gender</p>
+                <div class="file-input-wrapper">
+                    <input type="file" id="classlist-upload" accept=".xlsx,.xls">
+                    <label for="classlist-upload" class="file-input-label">Choose Excel File</label>
+                </div>
+                <div class="file-name" id="file-name">No file chosen - using sample data</div>
+            </div>
+
+            <!-- Bunking Class Form -->
+            <section id="bunking-form" class="form-section active">
+                <h2>Bunking Class Letter</h2>
+                <form id="bunking-form-element">
+                    <div class="form-group">
+                        <label for="bunking-teacher">Teacher Name:</label>
+                        <input type="text" id="bunking-teacher" required placeholder="e.g., Mohamed Hossameldin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bunking-date-letter">Date of Letter:</label>
+                        <input type="date" id="bunking-date-letter" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bunking-date-incident">Date of Bunking:</label>
+                        <input type="date" id="bunking-date-incident" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bunking-subject">Subject:</label>
+                        <input type="text" id="bunking-subject" required placeholder="e.g., English">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bunking-period">Period:</label>
+                        <input type="number" id="bunking-period" required min="1" max="10" placeholder="e.g., 5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Filter by Class:</label>
+                        <select id="bunking-class-filter">
+                            <option value="">All Classes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Students:</label>
+                        <div id="bunking-student-list" class="student-list"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Generate Letters</button>
+                </form>
+            </section>
+
+            <!-- Incomplete Work Form -->
+            <section id="incomplete-form" class="form-section">
+                <h2>Incomplete Work Letter</h2>
+                
+                <div class="work-type-toggle">
+                    <button type="button" class="toggle-btn active" data-work-type="homework">Homework</button>
+                    <button type="button" class="toggle-btn" data-work-type="classwork">Classwork</button>
+                </div>
+
+                <form id="incomplete-form-element">
+                    <div class="form-group">
+                        <label for="incomplete-teacher">Teacher Name:</label>
+                        <input type="text" id="incomplete-teacher" required placeholder="e.g., Natasha Jacobs">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-date-letter">Date of Letter:</label>
+                        <input type="date" id="incomplete-date-letter" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-subject">Subject:</label>
+                        <input type="text" id="incomplete-subject" required placeholder="e.g., Visual Arts">
+                    </div>
+
+                    <div class="form-group" id="cycle-group" style="display: none;">
+                        <label for="incomplete-cycle">Cycle:</label>
+                        <input type="text" id="incomplete-cycle" placeholder="e.g., 3">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-task">Name of Task:</label>
+                        <input type="text" id="incomplete-task" required placeholder="e.g., Essay on Photosynthesis">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-due-date">Original Due Date:</label>
+                        <input type="date" id="incomplete-due-date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-new-date">New Due Date:</label>
+                        <input type="date" id="incomplete-new-date" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Filter by Class:</label>
+                        <select id="incomplete-class-filter">
+                            <option value="">All Classes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Students:</label>
+                        <div id="incomplete-student-list" class="student-list"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Generate Letters</button>
+                </form>
+            </section>
+
+            <!-- Commendation Form -->
+            <section id="commendation-form" class="form-section">
+                <h2>Commendation Letter</h2>
+                <form id="commendation-form-element">
+                    <div class="form-group">
+                        <label for="commendation-teacher">Teacher Name:</label>
+                        <input type="text" id="commendation-teacher" required placeholder="e.g., John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="commendation-date-letter">Date of Letter:</label>
+                        <input type="date" id="commendation-date-letter" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="commendation-subject">Subject:</label>
+                        <input type="text" id="commendation-subject" required placeholder="e.g., Mathematics">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Filter by Class:</label>
+                        <select id="commendation-class-filter">
+                            <option value="">All Classes</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Select Students:</label>
+                        <div id="commendation-student-list" class="student-list"></div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Generate Letters</button>
+                </form>
+            </section>
+        </main>
+
+        <div id="loading" class="loading-overlay">
+            <div class="spinner"></div>
+            <p>Generating letters...</p>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let studentsData = [];
+        let currentWorkType = 'homework';
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeNavigation();
+            initializeWorkTypeToggle();
+            initializeFileUpload();
+            useSampleData();
+            initializeForms();
+        });
+
+        // Navigation between email types
+        function initializeNavigation() {
+            const navButtons = document.querySelectorAll('.nav-btn');
+            const formSections = document.querySelectorAll('.form-section');
+
+            navButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const type = this.dataset.type;
+
+                    navButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+
+                    formSections.forEach(section => section.classList.remove('active'));
+                    document.getElementById(`${type}-form`).classList.add('active');
+                });
+            });
+        }
+
+        // Toggle between homework and classwork
+        function initializeWorkTypeToggle() {
+            const toggleButtons = document.querySelectorAll('.toggle-btn');
+            
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    currentWorkType = this.dataset.workType;
+                    
+                    toggleButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const cycleGroup = document.getElementById('cycle-group');
+                    if (currentWorkType === 'classwork') {
+                        cycleGroup.style.display = 'block';
+                    } else {
+                        cycleGroup.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // File upload functionality
+        function initializeFileUpload() {
+            const fileInput = document.getElementById('classlist-upload');
+            const fileName = document.getElementById('file-name');
+
+            fileInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    fileName.textContent = file.name;
+                    loadExcelFile(file);
+                }
+            });
+        }
+
+        // Load Excel file
+        function loadExcelFile(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    studentsData = jsonData.map((row, index) => ({
+                        id: index + 1,
+                        name: row.Name || row.name || '',
+                        class: row.Class || row.class || row.Grade || row.grade || '',
+                        gender: (row.Gender || row.gender || 'male').toLowerCase()
+                    }));
+                    
+                    populateStudentLists();
+                    alert('Student data loaded successfully!');
+                } catch (error) {
+                    alert('Error reading Excel file. Please check the format.');
+                    console.error(error);
+                }
+            };
+            
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Sample data
+        function useSampleData() {
+            studentsData = [
+                { id: 1, name: 'Abdullah Fahad A Alsubaie', class: '9A', gender: 'male' },
+                { id: 2, name: 'Ahmed Mohamed Ali', class: '9A', gender: 'male' },
+                { id: 3, name: 'Sara Ahmed Hassan', class: '9B', gender: 'female' },
+                { id: 4, name: 'Omar Khalid Ibrahim', class: '10A', gender: 'male' },
+                { id: 5, name: 'Fatima Ali Mohammed', class: '10A', gender: 'female' },
+                { id: 6, name: 'Youssef Hassan Abdullah', class: '10B', gender: 'male' },
+                { id: 7, name: 'Layla Ibrahim Saleh', class: '11A', gender: 'female' },
+                { id: 8, name: 'Kareem Mohammed Yousef', class: '11A', gender: 'male' },
+                { id: 9, name: 'Noor Saleh Ahmed', class: '11B', gender: 'female' },
+                { id: 10, name: 'Hassan Ali Omar', class: '12A', gender: 'male' }
+            ];
+            
+            populateStudentLists();
+        }
+
+        // Populate all student lists
+        function populateStudentLists() {
+            populateStudentList('bunking');
+            populateStudentList('incomplete');
+            populateStudentList('commendation');
+            populateClassFilters();
+        }
+
+        // Populate individual student list
+        function populateStudentList(formType) {
+            const listContainer = document.getElementById(`${formType}-student-list`);
+            listContainer.innerHTML = '';
+            
+            const selectAllDiv = document.createElement('div');
+            selectAllDiv.className = 'select-all-container';
+            selectAllDiv.innerHTML = `
+                <label>
+                    <input type="checkbox" id="${formType}-select-all">
+                    <strong>Select All</strong>
+                </label>
+            `;
+            listContainer.appendChild(selectAllDiv);
+            
+            document.getElementById(`${formType}-select-all`).addEventListener('change', function() {
+                const checkboxes = listContainer.querySelectorAll('.student-checkbox:not([style*="display: none"])');
+                checkboxes.forEach(cb => {
+                    if (cb.parentElement.style.display !== 'none') {
+                        cb.checked = this.checked;
+                    }
+                });
+            });
+            
+            studentsData.forEach(student => {
+                const studentDiv = document.createElement('div');
+                studentDiv.className = 'student-item';
+                studentDiv.dataset.class = student.class;
+                studentDiv.dataset.studentId = student.id;
+                
+                studentDiv.innerHTML = `
+                    <input type="checkbox" id="${formType}-student-${student.id}" 
+                           class="student-checkbox" value="${student.id}">
+                    <label for="${formType}-student-${student.id}">
+                        <div class="student-info">
+                            <span>${student.name}</span>
+                            <span class="student-class">${student.class}</span>
+                        </div>
+                    </label>
+                `;
+                
+                listContainer.appendChild(studentDiv);
+            });
+        }
+
+        // Populate class filters
+        function populateClassFilters() {
+            const classes = [...new Set(studentsData.map(s => s.class))].sort();
+            
+            ['bunking', 'incomplete', 'commendation'].forEach(formType => {
+                const filter = document.getElementById(`${formType}-class-filter`);
+                filter.innerHTML = '<option value="">All Classes</option>';
+                
+                classes.forEach(cls => {
+                    const option = document.createElement('option');
+                    option.value = cls;
+                    option.textContent = cls;
+                    filter.appendChild(option);
+                });
+                
+                filter.addEventListener('change', function() {
+                    filterStudents(formType, this.value);
+                });
+            });
+        }
+
+        // Filter students by class
+        function filterStudents(formType, className) {
+            const students = document.querySelectorAll(`#${formType}-student-list .student-item:not(.select-all-container)`);
+            
+            students.forEach(student => {
+                if (!className || student.dataset.class === className) {
+                    student.style.display = 'flex';
+                } else {
+                    student.style.display = 'none';
+                }
+            });
+        }
+
+        // Initialize forms
+        function initializeForms() {
+            document.getElementById('bunking-form-element').addEventListener('submit', handleBunkingSubmit);
+            document.getElementById('incomplete-form-element').addEventListener('submit', handleIncompleteSubmit);
+            document.getElementById('commendation-form-element').addEventListener('submit', handleCommendationSubmit);
+        }
+
+        // Handle bunking form submission
+        function handleBunkingSubmit(e) {
+            e.preventDefault();
+            
+            const selectedStudents = getSelectedStudents('bunking');
+            if (selectedStudents.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
+            const formData = {
+                teacher: document.getElementById('bunking-teacher').value,
+                dateOfLetter: document.getElementById('bunking-date-letter').value,
+                dateOfIncident: document.getElementById('bunking-date-incident').value,
+                subject: document.getElementById('bunking-subject').value,
+                period: document.getElementById('bunking-period').value
+            };
+            
+            generateBunkingLetters(selectedStudents, formData);
+        }
+
+        // Handle incomplete work form submission
+        function handleIncompleteSubmit(e) {
+            e.preventDefault();
+            
+            const selectedStudents = getSelectedStudents('incomplete');
+            if (selectedStudents.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
+            const formData = {
+                teacher: document.getElementById('incomplete-teacher').value,
+                dateOfLetter: document.getElementById('incomplete-date-letter').value,
+                subject: document.getElementById('incomplete-subject').value,
+                cycle: document.getElementById('incomplete-cycle').value,
+                task: document.getElementById('incomplete-task').value,
+                dueDate: document.getElementById('incomplete-due-date').value,
+                newDate: document.getElementById('incomplete-new-date').value,
+                workType: currentWorkType
+            };
+            
+            generateIncompleteLetters(selectedStudents, formData);
+        }
+
+        // Handle commendation form submission
+        function handleCommendationSubmit(e) {
+            e.preventDefault();
+            
+            const selectedStudents = getSelectedStudents('commendation');
+            if (selectedStudents.length === 0) {
+                alert('Please select at least one student');
+                return;
+            }
+            
+            const formData = {
+                teacher: document.getElementById('commendation-teacher').value,
+                dateOfLetter: document.getElementById('commendation-date-letter').value,
+                subject: document.getElementById('commendation-subject').value
+            };
+            
+            generateCommendationLetters(selectedStudents, formData);
+        }
+
+        // Get selected students
+        function getSelectedStudents(formType) {
+            const checkboxes = document.querySelectorAll(`#${formType}-student-list .student-checkbox:checked`);
+            const selected = [];
+            
+            checkboxes.forEach(checkbox => {
+                const studentId = parseInt(checkbox.value);
+                const student = studentsData.find(s => s.id === studentId);
+                if (student) selected.push(student);
+            });
+            
+            return selected;
+        }
+
+        // Generate bunking letters
+        async function generateBunkingLetters(students, formData) {
+            showLoading();
+            
+            const zip = new JSZip();
+            const { jsPDF } = window.jspdf;
+            
+            for (const student of students) {
+                const pdf = new jsPDF();
+                
+                const pronoun = student.gender === 'female' ? 'her' : 'his';
+                const title = student.gender === 'female' ? 'daughter' : 'son';
+                const subjectPronoun = student.gender === 'female' ? 'she' : 'he';
+                
+                const dateFormatted = formatDate(formData.dateOfIncident);
+                
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Bunking Class', 105, 20, { align: 'center' });
+                
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'normal');
+                
+                let y = 40;
+                pdf.text(`Dear Parents of ${student.name}`, 20, y);
+                y += 15;
+                
+                pdf.text('Good day to you.', 20, y);
+                y += 15;
+                
+                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
+                
+                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                splitBody.forEach(line => {
+                    if (y > 270) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(line, 20, y);
+                    y += 7;
+                });
+                y += 8;
+                
+                const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
+                
+                const splitBody2 = pdf.splitTextToSize(bodyText2, 170);
+                splitBody2.forEach(line => {
+                    if (y > 270) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(line, 20, y);
+                    y += 7;
+                });
+                y += 8;
+                
+                if (y > 270) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text('Many thanks for your continued support and understanding.', 20, y);
+                y += 20;
+                
+                if (y > 250) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text(`Mr. ${formData.teacher}`, 20, y);
+                pdf.text('Mr. Atiq Salakh Uddin', 120, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text(`MYP ${formData.subject} Teacher - Boys`, 20, y);
+                pdf.text('Head of Upper School – Boys (Grades 9 -12)', 120, y);
+                
+                const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
+                zip.file(filename, pdf.output('blob'));
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            saveAs(content, 'Bunking_Letters.zip');
+            
+            hideLoading();
+        }
+
+        // Generate incomplete work letters
+        async function generateIncompleteLetters(students, formData) {
+            showLoading();
+            
+            const zip = new JSZip();
+            const { jsPDF } = window.jspdf;
+            
+            for (const student of students) {
+                const pdf = new jsPDF();
+                
+                const pronoun = student.gender === 'female' ? 'her' : 'his';
+                const title = student.gender === 'female' ? 'daughter' : 'son';
+                const subjPronoun = student.gender === 'female' ? 'she' : 'he';
+                
+                const dateFormatted = formatDate(formData.dateOfLetter);
+                const dueDateFormatted = formatDate(formData.dueDate);
+                const newDateFormatted = formatDate(formData.newDate);
+                
+                pdf.setFontSize(12);
+                pdf.text(`Date: ${dateFormatted}`, 20, 20);
+                
+                let y = 35;
+                pdf.text(`Dear Parent of ${student.name}`, 20, y);
+                y += 15;
+                
+                pdf.text('Assalmu Aleikum', 20, y);
+                y += 15;
+                
+                let bodyText;
+                if (formData.workType === 'homework') {
+                    bodyText = `Kindly be informed that your ${title} has failed to submit ${pronoun} homework which was assigned for ${formData.task}, and was due ${dueDateFormatted}. Please note that the student will be given an extension till ${newDateFormatted}. If ${subjPronoun} fails to submit, the homework policy will apply.`;
+                } else {
+                    bodyText = `As a school committed to keeping parents informed about the progress of their children, kindly note that your ${title} has failed to complete ${pronoun} cycle ${formData.cycle} classwork for ${formData.subject} subject, which was due on ${dueDateFormatted}. This will impact negatively on ${pronoun} Quarter 4 results.\n\n${student.name} has until ${newDateFormatted} to submit the completed work on Managebac`;
+                }
+                
+                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                splitBody.forEach(line => {
+                    if (y > 270) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(line, 20, y);
+                    y += 7;
+                });
+                y += 15;
+                
+                if (y > 270) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text('Respectfully', 20, y);
+                y += 20;
+                
+                if (y > 250) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text(`Mr. ${formData.teacher}`, 20, y);
+                pdf.text('Mr. Atiq Salakh Uddin', 120, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text(`${formData.subject} Teacher`, 20, y);
+                pdf.text('Head of Upper School- Boys', 120, y);
+                
+                const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
+                zip.file(filename, pdf.output('blob'));
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            saveAs(content, `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_Letters.zip`);
+            
+            hideLoading();
+        }
+
+        // Generate commendation letters
+        async function generateCommendationLetters(students, formData) {
+            showLoading();
+            
+            const zip = new JSZip();
+            const { jsPDF } = window.jspdf;
+            
+            for (const student of students) {
+                const pdf = new jsPDF();
+                
+                const pronoun = student.gender === 'female' ? 'Her' : 'His';
+                const lowerPronoun = pronoun.toLowerCase();
+                const firstName = student.name.split(' ')[0];
+                
+                const dateFormatted = formatDate(formData.dateOfLetter);
+                
+                pdf.setFontSize(12);
+                pdf.text(`Date: ${dateFormatted}`, 20, 20);
+                
+                pdf.setFontSize(16);
+                pdf.setFont(undefined, 'bold');
+                pdf.text('Commendation', 105, 40, { align: 'center' });
+                
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'normal');
+                
+                let y = 60;
+                pdf.text(`Dear Parent of ${student.name}`, 20, y);
+                y += 20;
+                
+                const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
+                
+                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                splitBody.forEach(line => {
+                    if (y > 270) {
+                        pdf.addPage();
+                        y = 20;
+                    }
+                    pdf.text(line, 20, y);
+                    y += 7;
+                });
+                y += 15;
+                
+                if (y > 270) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text('Thank you.', 20, y);
+                y += 25;
+                
+                if (y > 250) {
+                    pdf.addPage();
+                    y = 20;
+                }
+                pdf.text(`Mr. ${formData.teacher}`, 20, y);
+                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', 120, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text('Subject Teacher', 20, y);
+                pdf.text('Head of Middle & Upper School - Boys', 120, y);
+                
+                const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
+                zip.file(filename, pdf.output('blob'));
+            }
+            
+            const content = await zip.generateAsync({ type: 'blob' });
+            saveAs(content, 'Commendation_Letters.zip');
+            
+            hideLoading();
+        }
+
+        // Helper functions
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate();
+            const suffix = getDaySuffix(day);
+            const month = date.toLocaleDateString('en-US', { month: 'long' });
+            const year = date.getFullYear();
+            return `${day}${suffix} ${month}, ${year}`;
+        }
+
+        function getDaySuffix(day) {
+            if (day > 3 && day < 21) return 'th';
+            switch (day % 10) {
+                case 1: return 'st';
+                case 2: return 'nd';
+                case 3: return 'rd';
+                default: return 'th';
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loading').classList.add('active');
+        }
+
+        function hideLoading() {
+            document.getElementById('loading').classList.remove('active');
+        }
+    </script>
+</body>
+</html>
