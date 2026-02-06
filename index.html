@@ -411,7 +411,7 @@
                 <h3>📋 Instructions</h3>
                 <p style="margin-bottom: 10px; color: #333;">1. Select the type of letter from the tabs above</p>
                 <p style="margin-bottom: 10px; color: #333;">2. Fill in the required information</p>
-                <p style="margin-bottom: 10px; color: #333;">3. Filter students by class (optional)</p>
+                <p style="margin-bottom: 10px; color: #333;">3. Filter students by grade, then by class (optional)</p>
                 <p style="margin-bottom: 10px; color: #333;">4. Select the students you want to send letters to</p>
                 <p style="margin-bottom: 10px; color: #333;">5. Click "Generate Letters" to download all PDFs in a zip file</p>
             </div>
@@ -443,6 +443,13 @@
                     <div class="form-group">
                         <label for="bunking-period">Period:</label>
                         <input type="number" id="bunking-period" required min="1" max="10" placeholder="e.g., 5">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Filter by Grade:</label>
+                        <select id="bunking-grade-filter">
+                            <option value="">All Grades</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -507,6 +514,13 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Filter by Grade:</label>
+                        <select id="incomplete-grade-filter">
+                            <option value="">All Grades</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label>Filter by Class:</label>
                         <select id="incomplete-class-filter">
                             <option value="">All Classes</option>
@@ -539,6 +553,13 @@
                     <div class="form-group">
                         <label for="commendation-subject">Subject:</label>
                         <input type="text" id="commendation-subject" required placeholder="e.g., Mathematics">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Filter by Grade:</label>
+                        <select id="commendation-grade-filter">
+                            <option value="">All Grades</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -749,33 +770,88 @@
         function populateClassFilters() {
             const classes = [...new Set(studentsData.map(s => s.class))].sort();
             
+            // Extract unique grades from homerooms (e.g., "10" from "10.1 Boys")
+            const grades = [...new Set(studentsData.map(s => {
+                const match = s.class.match(/^(\d+)/);
+                return match ? match[1] : '';
+            }).filter(g => g))].sort();
+            
             ['bunking', 'incomplete', 'commendation'].forEach(formType => {
-                const filter = document.getElementById(`${formType}-class-filter`);
-                filter.innerHTML = '<option value="">All Classes</option>';
+                // Populate grade filter
+                const gradeFilter = document.getElementById(`${formType}-grade-filter`);
+                gradeFilter.innerHTML = '<option value="">All Grades</option>';
+                
+                grades.forEach(grade => {
+                    const option = document.createElement('option');
+                    option.value = grade;
+                    option.textContent = `Grade ${grade}`;
+                    gradeFilter.appendChild(option);
+                });
+                
+                // Populate class filter (initially with all classes)
+                const classFilter = document.getElementById(`${formType}-class-filter`);
+                classFilter.innerHTML = '<option value="">All Classes</option>';
                 
                 classes.forEach(cls => {
                     const option = document.createElement('option');
                     option.value = cls;
                     option.textContent = cls;
-                    filter.appendChild(option);
+                    classFilter.appendChild(option);
                 });
                 
-                filter.addEventListener('change', function() {
-                    filterStudents(formType, this.value);
+                // Add grade filter event listener
+                gradeFilter.addEventListener('change', function() {
+                    const selectedGrade = this.value;
+                    
+                    // Update class filter based on selected grade
+                    classFilter.innerHTML = '<option value="">All Classes</option>';
+                    const filteredClasses = classes.filter(cls => {
+                        if (!selectedGrade) return true;
+                        return cls.startsWith(selectedGrade + '.');
+                    });
+                    
+                    filteredClasses.forEach(cls => {
+                        const option = document.createElement('option');
+                        option.value = cls;
+                        option.textContent = cls;
+                        classFilter.appendChild(option);
+                    });
+                    
+                    // Reset class filter selection
+                    classFilter.value = '';
+                    
+                    // Filter students by grade
+                    filterStudentsByGradeAndClass(formType, selectedGrade, '');
+                });
+                
+                // Add class filter event listener
+                classFilter.addEventListener('change', function() {
+                    const selectedGrade = gradeFilter.value;
+                    const selectedClass = this.value;
+                    filterStudentsByGradeAndClass(formType, selectedGrade, selectedClass);
                 });
             });
         }
 
-        // Filter students by class
-        function filterStudents(formType, className) {
+        // Filter students by grade and class
+        function filterStudentsByGradeAndClass(formType, grade, className) {
             const students = document.querySelectorAll(`#${formType}-student-list .student-item:not(.select-all-container)`);
             
             students.forEach(student => {
-                if (!className || student.dataset.class === className) {
-                    student.style.display = 'flex';
-                } else {
-                    student.style.display = 'none';
+                const studentClass = student.dataset.class;
+                let shouldShow = true;
+                
+                // Filter by grade
+                if (grade && !studentClass.startsWith(grade + '.')) {
+                    shouldShow = false;
                 }
+                
+                // Filter by specific class
+                if (className && studentClass !== className) {
+                    shouldShow = false;
+                }
+                
+                student.style.display = shouldShow ? 'flex' : 'none';
             });
         }
 
