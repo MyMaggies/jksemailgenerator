@@ -421,8 +421,27 @@
                 <h2>Bunking Class Letter</h2>
                 <form id="bunking-form-element">
                     <div class="form-group">
+                        <label for="bunking-teacher-title">Teacher Title:</label>
+                        <select id="bunking-teacher-title" required>
+                            <option value="Mr">Mr</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="bunking-teacher">Teacher Name:</label>
                         <input type="text" id="bunking-teacher" required placeholder="e.g., Mohamed Hossameldin">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bunking-teacher-level">Teacher Level:</label>
+                        <select id="bunking-teacher-level" required>
+                            <option value="MYP">MYP</option>
+                            <option value="DP">DP</option>
+                            <option value="Both">MYP & DP</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -479,8 +498,27 @@
 
                 <form id="incomplete-form-element">
                     <div class="form-group">
+                        <label for="incomplete-teacher-title">Teacher Title:</label>
+                        <select id="incomplete-teacher-title" required>
+                            <option value="Mr">Mr</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="incomplete-teacher">Teacher Name:</label>
                         <input type="text" id="incomplete-teacher" required placeholder="e.g., Natasha Jacobs">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="incomplete-teacher-level">Teacher Level:</label>
+                        <select id="incomplete-teacher-level" required>
+                            <option value="MYP">MYP</option>
+                            <option value="DP">DP</option>
+                            <option value="Both">MYP & DP</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -541,8 +579,27 @@
                 <h2>Commendation Letter</h2>
                 <form id="commendation-form-element">
                     <div class="form-group">
+                        <label for="commendation-teacher-title">Teacher Title:</label>
+                        <select id="commendation-teacher-title" required>
+                            <option value="Mr">Mr</option>
+                            <option value="Ms">Ms</option>
+                            <option value="Mrs">Mrs</option>
+                            <option value="Miss">Miss</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
                         <label for="commendation-teacher">Teacher Name:</label>
                         <input type="text" id="commendation-teacher" required placeholder="e.g., John Smith">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="commendation-teacher-level">Teacher Level:</label>
+                        <select id="commendation-teacher-level" required>
+                            <option value="MYP">MYP</option>
+                            <option value="DP">DP</option>
+                            <option value="Both">MYP & DP</option>
+                        </select>
                     </div>
 
                     <div class="form-group">
@@ -884,7 +941,9 @@
             }
             
             const formData = {
+                teacherTitle: document.getElementById('bunking-teacher-title').value,
                 teacher: document.getElementById('bunking-teacher').value,
+                teacherLevel: document.getElementById('bunking-teacher-level').value,
                 dateOfLetter: document.getElementById('bunking-date-letter').value,
                 dateOfIncident: document.getElementById('bunking-date-incident').value,
                 subject: document.getElementById('bunking-subject').value,
@@ -905,7 +964,9 @@
             }
             
             const formData = {
+                teacherTitle: document.getElementById('incomplete-teacher-title').value,
                 teacher: document.getElementById('incomplete-teacher').value,
+                teacherLevel: document.getElementById('incomplete-teacher-level').value,
                 dateOfLetter: document.getElementById('incomplete-date-letter').value,
                 subject: document.getElementById('incomplete-subject').value,
                 cycle: document.getElementById('incomplete-cycle').value,
@@ -929,7 +990,9 @@
             }
             
             const formData = {
+                teacherTitle: document.getElementById('commendation-teacher-title').value,
                 teacher: document.getElementById('commendation-teacher').value,
+                teacherLevel: document.getElementById('commendation-teacher-level').value,
                 dateOfLetter: document.getElementById('commendation-date-letter').value,
                 subject: document.getElementById('commendation-subject').value
             };
@@ -974,27 +1037,27 @@
                 
                 const dateFormatted = formatDate(formData.dateOfIncident);
                 
-                // Landscape page dimensions
+                //Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 60;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
                 pdf.text('Bunking Class', pageWidth / 2, topMargin, { align: 'center' });
                 
-                pdf.setFontSize(11);
+                pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 20;
+                let y = topMargin + 25;
                 pdf.text(`Dear Parents of ${student.name}`, leftMargin, y);
-                y += 10;
+                y += 15;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 10;
+                y += 15;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1008,9 +1071,9 @@
                         }
                     }
                     pdf.text(line, leftMargin, y);
-                    y += 6;
+                    y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
                 
@@ -1024,9 +1087,9 @@
                         }
                     }
                     pdf.text(line, leftMargin, y);
-                    y += 6;
+                    y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 120) {
                     pdf.addPage();
@@ -1036,7 +1099,7 @@
                     }
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 20;
+                y += 25;
                 
                 if (y > pageHeight - 120) {
                     pdf.addPage();
@@ -1045,11 +1108,22 @@
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                
+                // Generate teacher level text
+                let teacherLevelText = '';
+                if (formData.teacherLevel === 'MYP') {
+                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
+                } else if (formData.teacherLevel === 'DP') {
+                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
+                } else {
+                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
+                }
+                
+                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
                 pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
-                y += 6;
-                pdf.setFontSize(9);
-                pdf.text(`MYP ${formData.subject} Teacher - Boys`, leftMargin, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text(teacherLevelText, leftMargin, y);
                 pdf.text('Head of Upper School – Boys (Grades 9 -12)', pageWidth / 2 + 40, y);
                 
                 const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
@@ -1090,20 +1164,20 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 60;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                pdf.setFontSize(11);
+                pdf.setFontSize(12);
                 pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
-                let y = topMargin + 15;
+                let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
-                y += 10;
+                y += 15;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 10;
+                y += 15;
                 
                 let bodyText;
                 if (formData.workType === 'homework') {
@@ -1114,7 +1188,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageheight - 120) {
+                    if (y > pageHeight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1122,11 +1196,11 @@
                         }
                     }
                     pdf.text(line, leftMargin, y);
-                    y += 6;
+                    y += 7;
                 });
-                y += 10;
+                y += 15;
                 
-                if (y > pageheight - 120) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1134,20 +1208,31 @@
                     }
                 }
                 pdf.text('Respectfully', leftMargin, y);
-                y += 20;
+                y += 25;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                
+                // Generate teacher level text
+                let teacherLevelText = '';
+                if (formData.teacherLevel === 'MYP') {
+                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
+                } else if (formData.teacherLevel === 'DP') {
+                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
+                } else {
+                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
+                }
+                
+                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
                 pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
-                y += 6;
-                pdf.setFontSize(9);
-                pdf.text(`${formData.subject} Teacher`, leftMargin, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text(teacherLevelText, leftMargin, y);
                 pdf.text('Head of Upper School- Boys', pageWidth / 2 + 40, y);
                 
                 const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
@@ -1186,30 +1271,30 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 60;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                pdf.setFontSize(11);
+                pdf.setFontSize(12);
                 pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', pageWidth / 2, topMargin + 15, { align: 'center' });
+                pdf.text('Commendation', pageWidth / 2, topMargin + 20, { align: 'center' });
                 
-                pdf.setFontSize(11);
+                pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 35;
+                let y = topMargin + 45;
                 pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
-                y += 15;
+                y += 20;
                 
                 const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageheight - 120) {
+                    if (y > pageHeight - 120) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1217,11 +1302,11 @@
                         }
                     }
                     pdf.text(line, leftMargin, y);
-                    y += 6;
+                    y += 7;
                 });
-                y += 10;
+                y += 15;
                 
-                if (y > pageheight - 120) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1229,20 +1314,31 @@
                     }
                 }
                 pdf.text('Thank you.', leftMargin, y);
-                y += 20;
+                y += 25;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 120) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
                     }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                
+                // Generate teacher level text
+                let teacherLevelText = '';
+                if (formData.teacherLevel === 'MYP') {
+                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
+                } else if (formData.teacherLevel === 'DP') {
+                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
+                } else {
+                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
+                }
+                
+                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
                 pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', pageWidth / 2 + 40, y);
-                y += 6;
-                pdf.setFontSize(9);
-                pdf.text('Subject Teacher', leftMargin, y);
+                y += 7;
+                pdf.setFontSize(10);
+                pdf.text(teacherLevelText, leftMargin, y);
                 pdf.text('Head of Middle & Upper School - Boys', pageWidth / 2 + 40, y);
                 
                 const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
