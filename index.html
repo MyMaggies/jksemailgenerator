@@ -433,13 +433,13 @@
         <main>
             <!-- Upload Section -->
             <div class="upload-section">
-                <h3>📋 Upload Class List (Optional)</h3>
-                <p style="margin-bottom: 15px; color: #666;">Upload an Excel file (.xlsx) with columns: Name, Class, Gender</p>
+                <h3>📋 Upload Class List</h3>
+                <p style="margin-bottom: 15px; color: #666;">Upload your classlist.xls file with columns: Name, Class, Gender</p>
                 <div class="file-input-wrapper">
-                    <input type="file" id="classlist-upload" accept=".xlsx,.xls">
-                    <label for="classlist-upload" class="file-input-label">Choose Excel File</label>
+                    <input type="file" id="classlist-upload" accept=".xls,.xlsx">
+                    <label for="classlist-upload" class="file-input-label">Choose Excel File (.xls or .xlsx)</label>
                 </div>
-                <div class="file-name" id="file-name">No file chosen - using sample data</div>
+                <div class="file-name" id="file-name">Upload classlist.xls or using sample data</div>
             </div>
 
             <!-- Bunking Class Form -->
@@ -594,15 +594,61 @@
         // Global variables
         let studentsData = [];
         let currentWorkType = 'homework';
+        let letterheadImage = null;
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeNavigation();
             initializeWorkTypeToggle();
             initializeFileUpload();
-            useSampleData();
+            loadLetterhead(); // Load letterhead.png
+            loadClasslistFromRepo(); // Try to load classlist.xls from repository
             initializeForms();
         });
+
+        // Load letterhead image from repository
+        function loadLetterhead() {
+            const img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+                letterheadImage = img;
+                console.log('Letterhead loaded successfully');
+            };
+            img.onerror = function() {
+                console.log('Letterhead not found, PDFs will be generated without background image');
+            };
+            img.src = 'letterhead.png';
+        }
+
+        // Try to load classlist.xls from repository
+        function loadClasslistFromRepo() {
+            fetch('classlist.xls')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File not found');
+                    }
+                    return response.arrayBuffer();
+                })
+                .then(data => {
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+                    
+                    studentsData = jsonData.map((row, index) => ({
+                        id: index + 1,
+                        name: row.Name || row.name || '',
+                        class: row.Class || row.class || row.Grade || row.grade || '',
+                        gender: (row.Gender || row.gender || 'male').toLowerCase()
+                    }));
+                    
+                    populateStudentLists();
+                    document.getElementById('file-name').textContent = 'Loaded: classlist.xls from repository';
+                })
+                .catch(error => {
+                    console.log('Could not load classlist.xls from repository, using sample data');
+                    useSampleData();
+                });
+        }
 
         // Navigation between email types
         function initializeNavigation() {
@@ -884,7 +930,14 @@
             const { jsPDF } = window.jspdf;
             
             for (const student of students) {
-                const pdf = new jsPDF();
+                const pdf = new jsPDF('landscape'); // Landscape orientation
+                
+                // Add letterhead image as background if available
+                if (letterheadImage) {
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                }
                 
                 const pronoun = student.gender === 'female' ? 'her' : 'his';
                 const title = student.gender === 'female' ? 'daughter' : 'son';
@@ -968,7 +1021,14 @@
             const { jsPDF } = window.jspdf;
             
             for (const student of students) {
-                const pdf = new jsPDF();
+                const pdf = new jsPDF('landscape'); // Landscape orientation
+                
+                // Add letterhead image as background if available
+                if (letterheadImage) {
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                }
                 
                 const pronoun = student.gender === 'female' ? 'her' : 'his';
                 const title = student.gender === 'female' ? 'daughter' : 'son';
@@ -1042,7 +1102,14 @@
             const { jsPDF } = window.jspdf;
             
             for (const student of students) {
-                const pdf = new jsPDF();
+                const pdf = new jsPDF('landscape'); // Landscape orientation
+                
+                // Add letterhead image as background if available
+                if (letterheadImage) {
+                    const pageWidth = pdf.internal.pageSize.getWidth();
+                    const pageHeight = pdf.internal.pageSize.getHeight();
+                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                }
                 
                 const pronoun = student.gender === 'female' ? 'Her' : 'His';
                 const lowerPronoun = pronoun.toLowerCase();
