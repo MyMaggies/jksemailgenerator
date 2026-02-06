@@ -977,9 +977,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 40;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;  // Lower start position to avoid header
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(16);
@@ -1000,7 +1000,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 80) {
+                    if (y > pageHeight - 100) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1016,7 +1016,7 @@
                 
                 const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > pageHeight - 80) {
+                    if (y > pageHeight - 100) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1028,7 +1028,7 @@
                 });
                 y += 10;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 100) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1038,7 +1038,7 @@
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1046,11 +1046,11 @@
                     }
                 }
                 pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 20, y);
+                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
                 y += 6;
                 pdf.setFontSize(9);
                 pdf.text(`MYP ${formData.subject} Teacher - Boys`, leftMargin, y);
-                pdf.text('Head of Upper School – Boys (Grades 9 -12)', pageWidth / 2 + 20, y);
+                pdf.text('Head of Upper School – Boys (Grades 9 -12)', pageWidth / 2 + 40, y);
                 
                 const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1090,9 +1090,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 40;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(11);
@@ -1114,7 +1114,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 80) {
+                    if (y > pageHeight - 100) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1126,7 +1126,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 100) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1136,7 +1136,7 @@
                 pdf.text('Respectfully', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1144,11 +1144,11 @@
                     }
                 }
                 pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 20, y);
+                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
                 y += 6;
                 pdf.setFontSize(9);
                 pdf.text(`${formData.subject} Teacher`, leftMargin, y);
-                pdf.text('Head of Upper School- Boys', pageWidth / 2 + 20, y);
+                pdf.text('Head of Upper School- Boys', pageWidth / 2 + 40, y);
                 
                 const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1186,9 +1186,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 40;
-                const rightMargin = 40;
-                const topMargin = 40;
+                const leftMargin = 60;
+                const rightMargin = 60;
+                const topMargin = 80;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 pdf.setFontSize(11);
@@ -1209,7 +1209,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 80) {
+                    if (y > pageHeight - 100) {
                         pdf.addPage();
                         y = topMargin;
                         if (letterheadImage) {
@@ -1221,7 +1221,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 80) {
+                if (y > pageHeight - 100) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1231,7 +1231,7 @@
                 pdf.text('Thank you.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
                     y = topMargin;
                     if (letterheadImage) {
@@ -1239,11 +1239,11 @@
                     }
                 }
                 pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', pageWidth / 2 + 20, y);
+                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', pageWidth / 2 + 40, y);
                 y += 6;
                 pdf.setFontSize(9);
                 pdf.text('Subject Teacher', leftMargin, y);
-                pdf.text('Head of Middle & Upper School - Boys', pageWidth / 2 + 20, y);
+                pdf.text('Head of Middle & Upper School - Boys', pageWidth / 2 + 40, y);
                 
                 const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
