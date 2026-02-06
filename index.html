@@ -974,63 +974,83 @@
                 
                 const dateFormatted = formatDate(formData.dateOfIncident);
                 
+                // Landscape page dimensions
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 40;
+                const maxWidth = pageWidth - leftMargin - rightMargin;
+                
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Bunking Class', 105, 20, { align: 'center' });
+                pdf.text('Bunking Class', pageWidth / 2, topMargin, { align: 'center' });
                 
-                pdf.setFontSize(12);
+                pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = 40;
-                pdf.text(`Dear Parents of ${student.name}`, 20, y);
+                let y = topMargin + 25;
+                pdf.text(`Dear Parents of ${student.name}`, leftMargin, y);
                 y += 15;
                 
-                pdf.text('Good day to you.', 20, y);
+                pdf.text('Good day to you.', leftMargin, y);
                 y += 15;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
-                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > 270) {
+                    if (y > pageHeight - 80) {
                         pdf.addPage();
-                        y = 20;
+                        y = topMargin;
+                        if (letterheadImage) {
+                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                        }
                     }
-                    pdf.text(line, 20, y);
-                    y += 7;
+                    pdf.text(line, leftMargin, y);
+                    y += 6;
                 });
-                y += 8;
+                y += 10;
                 
                 const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
                 
-                const splitBody2 = pdf.splitTextToSize(bodyText2, 170);
+                const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > 270) {
+                    if (y > pageHeight - 80) {
                         pdf.addPage();
-                        y = 20;
+                        y = topMargin;
+                        if (letterheadImage) {
+                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                        }
                     }
-                    pdf.text(line, 20, y);
-                    y += 7;
+                    pdf.text(line, leftMargin, y);
+                    y += 6;
                 });
-                y += 8;
+                y += 10;
                 
-                if (y > 270) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text('Many thanks for your continued support and understanding.', 20, y);
-                y += 20;
+                pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
+                y += 25;
                 
-                if (y > 250) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, 20, y);
-                pdf.text('Mr. Atiq Salakh Uddin', 120, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text(`MYP ${formData.subject} Teacher - Boys`, 20, y);
-                pdf.text('Head of Upper School – Boys (Grades 9 -12)', 120, y);
+                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 20, y);
+                y += 6;
+                pdf.setFontSize(9);
+                pdf.text(`MYP ${formData.subject} Teacher - Boys`, leftMargin, y);
+                pdf.text('Head of Upper School – Boys (Grades 9 -12)', pageWidth / 2 + 20, y);
                 
                 const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1067,14 +1087,22 @@
                 const dueDateFormatted = formatDate(formData.dueDate);
                 const newDateFormatted = formatDate(formData.newDate);
                 
-                pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, 20, 20);
+                // Landscape page dimensions
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 40;
+                const maxWidth = pageWidth - leftMargin - rightMargin;
                 
-                let y = 35;
-                pdf.text(`Dear Parent of ${student.name}`, 20, y);
+                pdf.setFontSize(11);
+                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
+                
+                let y = topMargin + 20;
+                pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
                 y += 15;
                 
-                pdf.text('Assalmu Aleikum', 20, y);
+                pdf.text('Assalmu Aleikum', leftMargin, y);
                 y += 15;
                 
                 let bodyText;
@@ -1084,34 +1112,43 @@
                     bodyText = `As a school committed to keeping parents informed about the progress of their children, kindly note that your ${title} has failed to complete ${pronoun} cycle ${formData.cycle} classwork for ${formData.subject} subject, which was due on ${dueDateFormatted}. This will impact negatively on ${pronoun} Quarter 4 results.\n\n${student.name} has until ${newDateFormatted} to submit the completed work on Managebac`;
                 }
                 
-                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > 270) {
+                    if (y > pageHeight - 80) {
                         pdf.addPage();
-                        y = 20;
+                        y = topMargin;
+                        if (letterheadImage) {
+                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                        }
                     }
-                    pdf.text(line, 20, y);
-                    y += 7;
+                    pdf.text(line, leftMargin, y);
+                    y += 6;
                 });
                 y += 15;
                 
-                if (y > 270) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text('Respectfully', 20, y);
-                y += 20;
+                pdf.text('Respectfully', leftMargin, y);
+                y += 25;
                 
-                if (y > 250) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, 20, y);
-                pdf.text('Mr. Atiq Salakh Uddin', 120, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text(`${formData.subject} Teacher`, 20, y);
-                pdf.text('Head of Upper School- Boys', 120, y);
+                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 20, y);
+                y += 6;
+                pdf.setFontSize(9);
+                pdf.text(`${formData.subject} Teacher`, leftMargin, y);
+                pdf.text('Head of Upper School- Boys', pageWidth / 2 + 20, y);
                 
                 const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1146,50 +1183,67 @@
                 
                 const dateFormatted = formatDate(formData.dateOfLetter);
                 
-                pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, 20, 20);
+                // Landscape page dimensions
+                const pageWidth = pdf.internal.pageSize.getWidth();
+                const pageHeight = pdf.internal.pageSize.getHeight();
+                const leftMargin = 40;
+                const rightMargin = 40;
+                const topMargin = 40;
+                const maxWidth = pageWidth - leftMargin - rightMargin;
+                
+                pdf.setFontSize(11);
+                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', 105, 40, { align: 'center' });
+                pdf.text('Commendation', pageWidth / 2, topMargin + 20, { align: 'center' });
                 
-                pdf.setFontSize(12);
+                pdf.setFontSize(11);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = 60;
-                pdf.text(`Dear Parent of ${student.name}`, 20, y);
+                let y = topMargin + 45;
+                pdf.text(`Dear Parent of ${student.name}`, leftMargin, y);
                 y += 20;
                 
                 const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
-                const splitBody = pdf.splitTextToSize(bodyText, 170);
+                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > 270) {
+                    if (y > pageHeight - 80) {
                         pdf.addPage();
-                        y = 20;
+                        y = topMargin;
+                        if (letterheadImage) {
+                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                        }
                     }
-                    pdf.text(line, 20, y);
-                    y += 7;
+                    pdf.text(line, leftMargin, y);
+                    y += 6;
                 });
                 y += 15;
                 
-                if (y > 270) {
+                if (y > pageHeight - 80) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text('Thank you.', 20, y);
+                pdf.text('Thank you.', leftMargin, y);
                 y += 25;
                 
-                if (y > 250) {
+                if (y > pageHeight - 60) {
                     pdf.addPage();
-                    y = 20;
+                    y = topMargin;
+                    if (letterheadImage) {
+                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
+                    }
                 }
-                pdf.text(`Mr. ${formData.teacher}`, 20, y);
-                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', 120, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text('Subject Teacher', 20, y);
-                pdf.text('Head of Middle & Upper School - Boys', 120, y);
+                pdf.text(`Mr. ${formData.teacher}`, leftMargin, y);
+                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', pageWidth / 2 + 20, y);
+                y += 6;
+                pdf.setFontSize(9);
+                pdf.text('Subject Teacher', leftMargin, y);
+                pdf.text('Head of Middle & Upper School - Boys', pageWidth / 2 + 20, y);
                 
                 const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
