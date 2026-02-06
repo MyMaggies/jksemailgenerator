@@ -434,7 +434,7 @@
             <!-- Upload Section -->
             <div class="upload-section">
                 <h3>📋 Upload Class List</h3>
-                <p style="margin-bottom: 15px; color: #666;">Upload your classlist.xls file with columns: Name, Class, Gender</p>
+                <p style="margin-bottom: 15px; color: #666;">Upload your classlist.xls file with columns: HOMEROOM, FULL NAME (or Name, Class, Gender)</p>
                 <div class="file-input-wrapper">
                     <input type="file" id="classlist-upload" accept=".xls,.xlsx">
                     <label for="classlist-upload" class="file-input-label">Choose Excel File (.xls or .xlsx)</label>
@@ -634,12 +634,24 @@
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
                     
-                    studentsData = jsonData.map((row, index) => ({
-                        id: index + 1,
-                        name: row.Name || row.name || '',
-                        class: row.Class || row.class || row.Grade || row.grade || '',
-                        gender: (row.Gender || row.gender || 'male').toLowerCase()
-                    }));
+                    studentsData = jsonData.map((row, index) => {
+                        // Handle both formats: HOMEROOM/FULL NAME and Name/Class/Gender
+                        let name = row['FULL NAME'] || row.Name || row.name || '';
+                        let className = row.HOMEROOM || row.Class || row.class || row.Grade || row.grade || '';
+                        let gender = row.Gender || row.gender || 'male';
+                        
+                        // Extract gender from name or class if needed (defaults to male for boys' school)
+                        if (typeof gender === 'string') {
+                            gender = gender.toLowerCase();
+                        }
+                        
+                        return {
+                            id: index + 1,
+                            name: name,
+                            class: className,
+                            gender: gender
+                        };
+                    });
                     
                     populateStudentLists();
                     document.getElementById('file-name').textContent = 'Loaded: classlist.xls from repository';
@@ -714,12 +726,24 @@
                     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
                     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
                     
-                    studentsData = jsonData.map((row, index) => ({
-                        id: index + 1,
-                        name: row.Name || row.name || '',
-                        class: row.Class || row.class || row.Grade || row.grade || '',
-                        gender: (row.Gender || row.gender || 'male').toLowerCase()
-                    }));
+                    studentsData = jsonData.map((row, index) => {
+                        // Handle both formats: HOMEROOM/FULL NAME and Name/Class/Gender
+                        let name = row['FULL NAME'] || row.Name || row.name || '';
+                        let className = row.HOMEROOM || row.Class || row.class || row.Grade || row.grade || '';
+                        let gender = row.Gender || row.gender || 'male';
+                        
+                        // Extract gender from name or class if needed (defaults to male for boys' school)
+                        if (typeof gender === 'string') {
+                            gender = gender.toLowerCase();
+                        }
+                        
+                        return {
+                            id: index + 1,
+                            name: name,
+                            class: className,
+                            gender: gender
+                        };
+                    });
                     
                     populateStudentLists();
                     alert('Student data loaded successfully!');
