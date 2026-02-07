@@ -1049,7 +1049,7 @@
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 const leftMargin = 30;
                 const rightMargin = 30;
-                const topMargin = 60;
+                const topMargin = 55;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1074,7 +1074,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 30) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1090,7 +1090,7 @@
                 
                 const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > pageHeight - 30) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1102,7 +1102,7 @@
                 });
                 y += 10;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1112,7 +1112,7 @@
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1177,7 +1177,7 @@
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 const leftMargin = 30;
                 const rightMargin = 30;
-                const topMargin = 60;
+                const topMargin = 55;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1200,7 +1200,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 30) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1212,7 +1212,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1222,7 +1222,7 @@
                 pdf.text('Respectfully', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1285,7 +1285,7 @@
                 const pageHeight = pdf.internal.pageSize.getHeight();
                 const leftMargin = 30;
                 const rightMargin = 30;
-                const topMargin = 60;
+                const topMargin = 55;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1307,7 +1307,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 30) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1319,7 +1319,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1329,7 +1329,7 @@
                 pdf.text('Thank you.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
