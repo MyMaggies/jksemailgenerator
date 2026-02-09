@@ -1063,12 +1063,12 @@
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 45;
+                let y = topMargin + 22.5;
                 pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 15;
+                y += 7.5;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 15;
+                y += 7.5;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1186,10 +1186,10 @@
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 15;
+                y += 7.5;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 15;
+                y += 7.5;
                 
                 let bodyText;
                 if (formData.workType === 'homework') {
@@ -1210,7 +1210,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 15;
+                y += 7.5;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1299,7 +1299,7 @@
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 45;
+                let y = topMargin + 22.5;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 20;
                 
@@ -1317,7 +1317,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 15;
+                y += 7.5;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
