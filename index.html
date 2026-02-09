@@ -1065,10 +1065,10 @@
                 
                 let y = topMargin + 22.5;
                 pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 7.5;
+                y += 10;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 7.5;
+                y += 10;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1110,7 +1110,7 @@
                     y = topMargin;
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 25;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1186,10 +1186,10 @@
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 let bodyText;
                 if (formData.workType === 'homework') {
@@ -1210,7 +1210,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 7.5;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1220,7 +1220,7 @@
                     y = topMargin;
                 }
                 pdf.text('Respectfully', leftMargin, y);
-                y += 25;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1301,7 +1301,7 @@
                 
                 let y = topMargin + 22.5;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 20;
+                y += 10;
                 
                 const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
@@ -1317,7 +1317,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 7.5;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1327,7 +1327,7 @@
                     y = topMargin;
                 }
                 pdf.text('Thank you.', leftMargin, y);
-                y += 25;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
