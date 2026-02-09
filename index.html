@@ -1070,7 +1070,7 @@
                 pdf.text('Good day to you.', leftMargin, y);
                 y += 7.5;
                 
-                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
+                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
@@ -1186,10 +1186,10 @@
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 7.5;
+                y += 15;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 7.5;
+                y += 15;
                 
                 let bodyText;
                 if (formData.workType === 'homework') {
