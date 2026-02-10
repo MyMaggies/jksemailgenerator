@@ -1050,9 +1050,9 @@
                 //Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;
+                const leftMargin = 25;
+                const rightMargin = 25;
+                const topMargin = 50;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1178,9 +1178,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;
+                const leftMargin = 25;
+                const rightMargin = 25;
+                const topMargin = 50;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1286,9 +1286,9 @@
                 // Landscape page dimensions
                 const pageWidth = pdf.internal.pageSize.getWidth();
                 const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 60;
-                const rightMargin = 60;
-                const topMargin = 80;
+                const leftMargin = 25;
+                const rightMargin = 25;
+                const topMargin = 50;
                 const maxWidth = pageWidth - leftMargin - rightMargin;
                 
                 // Add date at top left
@@ -1310,7 +1310,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 60) {
+                    if (y > pageHeight - 30) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1322,7 +1322,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 30) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
