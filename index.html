@@ -1093,7 +1093,7 @@
                 
                 const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
                 splitBody2.forEach(line => {
-                    if (y > pageHeight - 60) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1105,7 +1105,7 @@
                 });
                 y += 10;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1115,7 +1115,7 @@
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1203,7 +1203,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 60) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1215,7 +1215,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1225,7 +1225,7 @@
                 pdf.text('Respectfully', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1310,7 +1310,7 @@
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
-                    if (y > pageHeight - 30) {
+                    if (y > pageHeight - 40) {
                         pdf.addPage();
                         if (letterheadImage) {
                             pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1322,7 +1322,7 @@
                 });
                 y += 15;
                 
-                if (y > pageHeight - 30) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
@@ -1332,7 +1332,7 @@
                 pdf.text('Thank you.', leftMargin, y);
                 y += 25;
                 
-                if (y > pageHeight - 60) {
+                if (y > pageHeight - 40) {
                     pdf.addPage();
                     if (letterheadImage) {
                         pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
