@@ -1195,10 +1195,12 @@
                 y += 15;
                 
                 let bodyText;
-                if (formData.workType === 'homework') {
-                    bodyText = `Kindly be informed that your ${title} has failed to submit ${pronoun} homework which was assigned for ${formData.task}, and was due ${dueDateFormatted}. Please note that the student will be given an extension till ${newDateFormatted}. If ${subjPronoun} fails to submit, the homework policy will apply.`;
+              if (formData.workType === 'homework') {
+    const firstName = student.name.split(' ')[0];
+    bodyText = `Kindly be informed that your ${title} has failed to submit ${pronoun} ${formData.subject} homework (${formData.task}), and was due ${dueDateFormatted}. Please note that ${firstName} will be given an extension till ${newDateFormatted}. If ${subjPronoun} fails to submit, the homework policy will apply.`;
                } else {
-    bodyText = `As a school committed to keeping parents informed about the progress of their children, kindly note that your ${title} has failed to complete ${pronoun} ${formData.subject} cycle ${formData.cycle} classwork (${formData.task}), which was due on ${dueDateFormatted}. This will impact negatively on ${pronoun} Quarter 4 results.\n\n${student.name} has until ${newDateFormatted} to submit the completed work on Managebac or in class.`;
+    const firstName = student.name.split(' ')[0];
+    bodyText = `As a school committed to keeping parents informed about the progress of their children, kindly note that your ${title} has failed to complete ${pronoun} ${formData.subject} cycle ${formData.cycle} classwork (${formData.task}), which was due on ${dueDateFormatted}. This will impact negatively on ${pronoun} Quarter 4 results.\n\n${firstName} has until ${newDateFormatted} to submit the completed work on Managebac`;
 }
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
