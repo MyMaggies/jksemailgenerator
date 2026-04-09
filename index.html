@@ -1043,6 +1043,7 @@
                 const pronoun = student.gender === 'female' ? 'her' : 'his';
                 const title = student.gender === 'female' ? 'daughter' : 'son';
                 const subjectPronoun = student.gender === 'female' ? 'she' : 'he';
+                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
                 
                 const dateFormatted = formatDate(formData.dateOfIncident);
                 const letterDateFormatted = formatDate(formData.dateOfLetter);
@@ -1073,7 +1074,7 @@
                 pdf.text('Good day to you.', leftMargin, y);
                 y += 15;
                 
-                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${pronoun}self at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
+                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
@@ -1170,6 +1171,7 @@
                 const pronoun = student.gender === 'female' ? 'her' : 'his';
                 const title = student.gender === 'female' ? 'daughter' : 'son';
                 const subjPronoun = student.gender === 'female' ? 'she' : 'he';
+                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
                 
                 const dateFormatted = formatDate(formData.dateOfLetter);
                 const dueDateFormatted = formatDate(formData.dueDate);
@@ -1282,6 +1284,7 @@
                 const pronoun = student.gender === 'female' ? 'Her' : 'His';
                 const lowerPronoun = pronoun.toLowerCase();
                 const firstName = student.name.split(' ')[0];
+                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
                 
                 const dateFormatted = formatDate(formData.dateOfLetter);
                 
@@ -1308,7 +1311,7 @@
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 20;
                 
-                const bodyText = `We are pleased to inform you that ${student.name} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
+                const bodyText = `We are pleased to inform you that ${firstName} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
                 const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
                 splitBody.forEach(line => {
