@@ -1315,12 +1315,12 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', pageWidth / 2, topMargin + 20, { align: 'center' });
+                pdf.text('Commendation', pageWidth / 2, topMargin + 15, { align: 'center' });
                 
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 45;
+                let y = topMargin + 35;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 8;
                 
