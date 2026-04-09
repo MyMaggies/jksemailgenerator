@@ -1140,7 +1140,7 @@ const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no ma
 const isMiddleSchool = grade >= 6 && grade <= 8;
 
 const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
 
 pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
 pdf.text(adminName, pageWidth / 2 + 40, y);
@@ -1259,7 +1259,7 @@ const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no ma
 const isMiddleSchool = grade >= 6 && grade <= 8;
 
 const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
 
 pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
 pdf.text(adminName, pageWidth / 2 + 40, y);
@@ -1372,7 +1372,7 @@ const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9;
 const isMiddleSchool = grade >= 6 && grade <= 8;
 
 const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
 
 pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
 pdf.text(adminName, pageWidth / 2 + 40, y);
