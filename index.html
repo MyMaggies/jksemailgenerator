@@ -1134,12 +1134,20 @@
                     teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
                 }
                 
-                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text(teacherLevelText, leftMargin, y);
-                pdf.text('Head of Upper School – Boys (Grades 9 -12)', pageWidth / 2 + 40, y);
+               // Determine which administrator based on grade
+const gradeMatch = student.class.match(/^(\d+)/);
+const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no match
+const isMiddleSchool = grade >= 6 && grade <= 8;
+
+const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
+const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+
+pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
+pdf.text(adminName, pageWidth / 2 + 40, y);
+y += 7;
+pdf.setFontSize(10);
+pdf.text(teacherLevelText, leftMargin, y);
+pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1246,15 +1254,19 @@
                     teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
                 }
                 
-                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Atiq Salakh Uddin', pageWidth / 2 + 40, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text(teacherLevelText, leftMargin, y);
-                pdf.text('Head of Upper School- Boys', pageWidth / 2 + 40, y);
-                
-                const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
-                zip.file(filename, pdf.output('blob'));
+              const gradeMatch = student.class.match(/^(\d+)/);
+const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no match
+const isMiddleSchool = grade >= 6 && grade <= 8;
+
+const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
+const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+
+pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
+pdf.text(adminName, pageWidth / 2 + 40, y);
+y += 7;
+pdf.setFontSize(10);
+pdf.text(teacherLevelText, leftMargin, y);
+pdf.text(adminTitle, pageWidth / 2 + 40, y);
             }
             
             const content = await zip.generateAsync({ type: 'blob' });
@@ -1354,15 +1366,20 @@
                     teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
                 }
                 
-                pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-                pdf.text('Mr. Gregory Lewis/Mr Atiq Uddin', pageWidth / 2 + 40, y);
-                y += 7;
-                pdf.setFontSize(10);
-                pdf.text(teacherLevelText, leftMargin, y);
-                pdf.text('Head of Middle & Upper School - Boys', pageWidth / 2 + 40, y);
-                
-                const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
-                zip.file(filename, pdf.output('blob'));
+                // Determine which administrator based on grade
+const gradeMatch = student.class.match(/^(\d+)/);
+const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9;
+const isMiddleSchool = grade >= 6 && grade <= 8;
+
+const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
+const adminTitle = isMiddleSchool ? 'Head of Middle School – Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
+
+pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
+pdf.text(adminName, pageWidth / 2 + 40, y);
+y += 7;
+pdf.setFontSize(10);
+pdf.text(teacherLevelText, leftMargin, y);
+pdf.text(adminTitle, pageWidth / 2 + 40, y);
             }
             
             const content = await zip.generateAsync({ type: 'blob' });
