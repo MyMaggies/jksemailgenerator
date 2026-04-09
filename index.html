@@ -1067,12 +1067,12 @@
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 45;
+                let y = topMargin + 35;
                 pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1114,7 +1114,7 @@
                     y = topMargin;
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 25;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1198,10 +1198,10 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 let bodyText;
               if (formData.workType === 'homework') {
@@ -1224,7 +1224,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 15;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1234,7 +1234,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     y = topMargin;
                 }
                 pdf.text('Respectfully', leftMargin, y);
-                y += 25;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1315,12 +1315,12 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 pdf.setFontSize(16);
                 pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', pageWidth / 2, topMargin + 15, { align: 'center' });
+                pdf.text('Commendation', pageWidth / 2, topMargin + 10, { align: 'center' });
                 
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'normal');
                 
-                let y = topMargin + 35;
+                let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
                 y += 10;
                 
@@ -1338,7 +1338,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 6;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
