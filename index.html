@@ -1148,7 +1148,6 @@ y += 7;
 pdf.setFontSize(10);
 pdf.text(teacherLevelText, leftMargin, y);
 pdf.text(adminTitle, pageWidth / 2 + 40, y);
-            }
                 
                 const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
@@ -1268,7 +1267,7 @@ y += 7;
 pdf.setFontSize(10);
 pdf.text(teacherLevelText, leftMargin, y);
 pdf.text(adminTitle, pageWidth / 2 + 40, y);
-            }
+            
              const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
             }
@@ -1383,7 +1382,7 @@ y += 7;
 pdf.setFontSize(10);
 pdf.text(teacherLevelText, leftMargin, y);
 pdf.text(adminTitle, pageWidth / 2 + 40, y);
-            }
+            
              const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
                 zip.file(filename, pdf.output('blob'));
             }
