@@ -1322,7 +1322,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 let y = topMargin + 45;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 12;
+                y += 8;
                 
                 const bodyText = `We are pleased to inform you that ${firstName} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
@@ -1338,7 +1338,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 10;
+                y += 6;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1348,7 +1348,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     y = topMargin;
                 }
                 pdf.text('Thank you.', leftMargin, y);
-                y += 15;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
