@@ -1069,10 +1069,10 @@
                 
                 let y = topMargin + 35;
                 pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 pdf.text('Good day to you.', leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
                 
@@ -1088,7 +1088,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
                 
@@ -1104,7 +1104,7 @@
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1114,7 +1114,7 @@
                     y = topMargin;
                 }
                 pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1198,10 +1198,10 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 let bodyText;
               if (formData.workType === 'homework') {
@@ -1224,7 +1224,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1234,7 +1234,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     y = topMargin;
                 }
                 pdf.text('Respectfully', leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1322,7 +1322,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                 
                 let y = topMargin + 20;
                 pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 const bodyText = `We are pleased to inform you that ${firstName} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
                 
@@ -1338,7 +1338,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     pdf.text(line, leftMargin, y);
                     y += 7;
                 });
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
@@ -1348,7 +1348,7 @@ pdf.text(adminTitle, pageWidth / 2 + 40, y);
                     y = topMargin;
                 }
                 pdf.text('Thank you.', leftMargin, y);
-                y += 8;
+                y += 10;
                 
                 if (y > pageHeight - 40) {
                     pdf.addPage();
