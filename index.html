@@ -3,1472 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Email Generator</title>
+    <title>JKS Teacher Portal</title>
     
-    <!-- Include libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script type="text/javascript" src="https://js.live.net/v7.2/OneDrive.js"></script>
     
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
+        .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden; }
+        header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        
+        .email-type-nav { display: flex; flex-wrap: wrap; background: #f5f5f5; border-bottom: 2px solid #ddd; }
+        .nav-btn { flex: 1; min-width: 120px; padding: 15px; background: transparent; border: none; font-size: 0.85em; font-weight: 600; color: #666; cursor: pointer; border-right: 1px solid #ddd; transition: 0.2s; }
+        .nav-btn.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; }
+        
+        main { padding: 30px; }
+        .form-section { display: none; }
+        .form-section.active { display: block; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
+        
+        .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
+        
+        /* Fixed Horizontal List Layout */
+        .student-list-container { max-height: 450px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
+        
+        .student-item { 
+            display: flex; 
+            align-items: center; 
+            padding: 10px 15px; 
+            background: white; 
+            border: 1px solid #eee; 
+            border-radius: 8px; 
+            margin-bottom: 6px;
+            cursor: pointer; 
+            transition: 0.2s;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-        }
-
-        header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
-            text-align: center;
-        }
-
-        header h1 {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-
-        .subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
-        }
-
-        .email-type-nav {
-            display: flex;
-            background: #f5f5f5;
-            border-bottom: 2px solid #ddd;
-        }
-
-        .nav-btn {
-            flex: 1;
-            padding: 20px;
-            background: transparent;
-            border: none;
-            font-size: 1.1em;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .nav-btn:hover {
-            background: #e8e8e8;
-            color: #333;
-        }
-
-        .nav-btn.active {
-            background: white;
-            color: #667eea;
-        }
-
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: #667eea;
-        }
-
-        main {
-            padding: 40px 30px;
-        }
-
-        .form-section {
-            display: none;
-        }
-
-        .form-section.active {
-            display: block;
-            animation: fadeIn 0.4s ease;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        h2 {
-            color: #333;
-            margin-bottom: 30px;
-            font-size: 1.8em;
-            border-bottom: 3px solid #667eea;
-            padding-bottom: 10px;
-        }
-
-        .work-type-toggle {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-
-        .toggle-btn {
-            flex: 1;
-            padding: 12px 24px;
-            border: 2px solid #667eea;
-            background: white;
-            color: #667eea;
-            font-size: 1em;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-btn:hover {
-            background: #f0f4ff;
-        }
-
-        .toggle-btn.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .form-group {
-            margin-bottom: 25px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #333;
-            font-size: 0.95em;
-        }
-
-        input[type="text"],
-        input[type="date"],
-        input[type="number"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: all 0.3s ease;
-        }
-
-        input[type="text"]:focus,
-        input[type="date"]:focus,
-        input[type="number"]:focus,
-        select:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .student-list {
-            max-height: 300px;
-            overflow-y: auto;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background: #fafafa;
-        }
-
-        .student-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            margin-bottom: 8px;
-            background: white;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .student-item:hover {
-            background: #f0f4ff;
-            transform: translateX(5px);
-        }
-
-        .student-item input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 12px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .student-item label {
-            margin: 0;
-            cursor: pointer;
-            font-weight: 500;
-            flex: 1;
-        }
-
-        .student-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex: 1;
-        }
-
-        .student-class {
-            color: #666;
-            font-size: 0.9em;
-            margin-left: 10px;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 15px 30px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1em;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            z-index: 1000;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .loading-overlay p {
-            color: white;
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: 600;
-        }
-
-        .student-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .student-list::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 4px;
-        }
-
-        .student-list::-webkit-scrollbar-thumb {
-            background: #667eea;
-            border-radius: 4px;
-        }
-
-        .student-list::-webkit-scrollbar-thumb:hover {
-            background: #5568d3;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            header h1 {
-                font-size: 1.8em;
-            }
-
-            .subtitle {
-                font-size: 1em;
-            }
-
-            main {
-                padding: 20px 15px;
-            }
-
-            .nav-btn {
-                padding: 15px 10px;
-                font-size: 0.95em;
-            }
-
-            h2 {
-                font-size: 1.5em;
-            }
-        }
-
-        .select-all-container {
-            margin-bottom: 10px;
-            padding: 10px;
-            background: white;
-            border-radius: 6px;
-        }
-
-        .select-all-container label {
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            margin: 0;
-        }
-
-        .select-all-container input[type="checkbox"] {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-            cursor: pointer;
-            accent-color: #667eea;
-        }
-
-        .upload-section {
-            background: #f0f4ff;
-            padding: 25px 30px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            border-left: 5px solid #667eea;
-        }
-
-        .upload-section h3 {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.3em;
-        }
-
-        .upload-section p {
-            margin-bottom: 10px;
-            color: #333;
-            line-height: 1.6;
-        }
+        .student-item:hover { background: #f8f9ff; border-color: #667eea; }
+        
+        /* The Fix: Narrow Checkbox & Clean Alignment */
+        .checkbox-container { width: 40px; display: flex; justify-content: center; }
+        .student-item input[type="checkbox"] { transform: scale(1.3); pointer-events: none; }
+        
+        .student-info-row { display: flex; align-items: center; justify-content: space-between; flex: 1; padding-left: 10px; }
+        .student-name { font-weight: 600; color: #333; font-size: 0.95em; }
+        .student-class { color: #666; font-size: 0.85em; text-align: right; }
+        
+        .filter-bar { margin-bottom: 5px; border: 2px solid #667eea; }
+        .search-tip { font-size: 0.85em; color: #666; margin-bottom: 15px; display: block; font-style: italic; }
+        
+        .btn-primary { width: 100%; padding: 18px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: 600; cursor: pointer; margin-top: 20px; }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); color: white; justify-content: center; align-items: center; z-index: 2000; }
+        .loading-overlay.active { display: flex; }
     </style>
 </head>
 <body>
+
     <div class="container">
         <header>
-            <h1>Teacher Email Generator</h1>
-            <p class="subtitle">Generate professional letters for students</p>
+            <h1>JKS Teacher Portal</h1>
+            <p>Automated Parent Communication</p>
         </header>
 
         <nav class="email-type-nav">
-            <button class="nav-btn active" data-type="bunking">Bunking Class</button>
-            <button class="nav-btn" data-type="incomplete">Incomplete Work</button>
+            <button class="nav-btn active" data-type="bunking">Bunking</button>
+            <button class="nav-btn" data-type="disruption">Disruption</button>
+            <button class="nav-btn" data-type="unprepared">Unprepared</button>
+            <button class="nav-btn" data-type="absence">Absence</button>
+            <button class="nav-btn" data-type="copybook">Copybook</button>
+            <button class="nav-btn" data-type="reinforcement">Reinforcement</button>
+            <button class="nav-btn" data-type="performance">Performance</button>
             <button class="nav-btn" data-type="commendation">Commendation</button>
         </nav>
 
         <main>
-            <!-- Instructions Section -->
             <div class="upload-section">
-                <h3>📋 Instructions</h3>
-                <p style="margin-bottom: 10px; color: #333;">1. Select the type of letter from the tabs above</p>
-                <p style="margin-bottom: 10px; color: #333;">2. Fill in the required information</p>
-                <p style="margin-bottom: 10px; color: #333;">3. Filter students by grade, then by class (optional)</p>
-                <p style="margin-bottom: 10px; color: #333;">4. Select the students you want to send letters to</p>
-                <p style="margin-bottom: 10px; color: #333;">5. Click "Generate Letters" to download all PDFs in a zip file</p>
+                <h3>Step 1: Connect Student Data</h3>
+                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px dashed #667eea; margin-top: 10px;">
+                    <label>Manual Excel Upload</label>
+                    <input type="file" id="manual-upload" accept=".xlsx, .xls">
+                </div>
+                <div style="margin-top: 15px; opacity: 0.6;">
+                    <label>OneDrive Sync (Pending IT Approval)</label>
+                    <div style="display: flex; gap: 10px;">
+                        <button disabled style="background:#ccc; padding:10px; border-radius:5px; border:none; color:white; flex:1; cursor:not-allowed;">♂️ Boys Campus</button>
+                        <button disabled style="background:#ccc; padding:10px; border-radius:5px; border:none; color:white; flex:1; cursor:not-allowed;">♀️ Girls Campus</button>
+                    </div>
+                </div>
             </div>
 
-            <!-- Bunking Class Form -->
-            <section id="bunking-form" class="form-section active">
-                <h2>Bunking Class Letter</h2>
-                <form id="bunking-form-element">
-                    <div class="form-group">
-                        <label for="bunking-teacher-title">Teacher Title:</label>
-                        <select id="bunking-teacher-title" required>
-                            <option value="Mr">Mr</option>
-                            <option value="Ms">Ms</option>
-                            <option value="Mrs">Mrs</option>
-                            <option value="Miss">Miss</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-teacher">Teacher Name:</label>
-                        <input type="text" id="bunking-teacher" required placeholder="e.g., Mohamed Hossameldin">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-teacher-level">Teacher Level:</label>
-                        <select id="bunking-teacher-level" required>
-                            <option value="MYP">MYP</option>
-                            <option value="DP">DP</option>
-                            <option value="Both">MYP & DP</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-date-letter">Date of Letter:</label>
-                        <input type="date" id="bunking-date-letter" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-date-incident">Date of Bunking:</label>
-                        <input type="date" id="bunking-date-incident" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-subject">Subject:</label>
-                        <input type="text" id="bunking-subject" required placeholder="e.g., English">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="bunking-period">Period:</label>
-                        <input type="number" id="bunking-period" required min="1" max="10" placeholder="e.g., 5">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Grade:</label>
-                        <select id="bunking-grade-filter">
-                            <option value="">All Grades</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Class:</label>
-                        <select id="bunking-class-filter">
-                            <option value="">All Classes</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Select Students:</label>
-                        <div id="bunking-student-list" class="student-list"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Generate Letters</button>
-                    <button type="button" class="btn-primary" onclick="sendToApprover('bunking')" style="display:none; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); margin-top: 10px;">📧 Email to Approver</button>
-                </form>
-            </section>
-
-            <!-- Incomplete Work Form -->
-            <section id="incomplete-form" class="form-section">
-                <h2>Incomplete Work Letter</h2>
-                
-                <div class="work-type-toggle">
-                    <button type="button" class="toggle-btn active" data-work-type="homework">Homework</button>
-                    <button type="button" class="toggle-btn" data-work-type="classwork">Classwork</button>
+            <div class="form-group" style="background:#f9f9f9; padding:20px; border-radius:10px;">
+                <label>Teacher Profile</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="global-title" style="width:100px;"><option>Mr</option><option>Ms</option><option>Mrs</option></select>
+                    <input type="text" id="global-teacher" placeholder="Full Name">
+                    <input type="text" id="global-subject" placeholder="Subject">
+                    <select id="global-level"><option>MYP</option><option>DP</option></select>
                 </div>
+            </div>
 
-                <form id="incomplete-form-element">
-                    <div class="form-group">
-                        <label for="incomplete-teacher-title">Teacher Title:</label>
-                        <select id="incomplete-teacher-title" required>
-                            <option value="Mr">Mr</option>
-                            <option value="Ms">Ms</option>
-                            <option value="Mrs">Mrs</option>
-                            <option value="Miss">Miss</option>
-                        </select>
-                    </div>
+            <div id="forms-container"></div>
 
-                    <div class="form-group">
-                        <label for="incomplete-teacher">Teacher Name:</label>
-                        <input type="text" id="incomplete-teacher" required placeholder="e.g., Natasha Jacobs">
-                    </div>
+            <div class="form-group" style="margin-top:30px;">
+                <label>Step 2: Select Students</label>
+                <input type="text" class="filter-bar" placeholder="🔍 Filter list..." id="student-filter">
+                <span class="search-tip">Search by student name or class (e.g., "6.1")</span>
+                <div id="student-grid" class="student-list-container">Upload classlist to begin...</div>
+            </div>
 
-                    <div class="form-group">
-                        <label for="incomplete-teacher-level">Teacher Level:</label>
-                        <select id="incomplete-teacher-level" required>
-                            <option value="MYP">MYP</option>
-                            <option value="DP">DP</option>
-                            <option value="Both">MYP & DP</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="incomplete-date-letter">Date of Letter:</label>
-                        <input type="date" id="incomplete-date-letter" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="incomplete-subject">Subject:</label>
-                        <input type="text" id="incomplete-subject" required placeholder="e.g., Visual Arts">
-                    </div>
-
-                    <div class="form-group" id="cycle-group" style="display: none;">
-                        <label for="incomplete-cycle">Cycle:</label>
-                        <input type="text" id="incomplete-cycle" placeholder="e.g., 3">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="incomplete-task">Name of Task:</label>
-                        <input type="text" id="incomplete-task" required placeholder="e.g., Essay on Photosynthesis">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="incomplete-due-date">Original Due Date:</label>
-                        <input type="date" id="incomplete-due-date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="incomplete-new-date">New Due Date:</label>
-                        <input type="date" id="incomplete-new-date" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Grade:</label>
-                        <select id="incomplete-grade-filter">
-                            <option value="">All Grades</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Class:</label>
-                        <select id="incomplete-class-filter">
-                            <option value="">All Classes</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Select Students:</label>
-                        <div id="incomplete-student-list" class="student-list"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Generate Letters</button>
-                    <button type="button" class="btn-primary" onclick="sendToApprover('incomplete')" style="display:none; background: linear-gradient(135deg, #28a745 0%, #20c997 100%); margin-top: 10px;">📧 Email to Approver</button>
-                </form>
-            </section>
-
-            <!-- Commendation Form -->
-            <section id="commendation-form" class="form-section">
-                <h2>Commendation Letter</h2>
-                <form id="commendation-form-element">
-                    <div class="form-group">
-                        <label for="commendation-teacher-title">Teacher Title:</label>
-                        <select id="commendation-teacher-title" required>
-                            <option value="Mr">Mr</option>
-                            <option value="Ms">Ms</option>
-                            <option value="Mrs">Mrs</option>
-                            <option value="Miss">Miss</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="commendation-teacher">Teacher Name:</label>
-                        <input type="text" id="commendation-teacher" required placeholder="e.g., John Smith">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="commendation-teacher-level">Teacher Level:</label>
-                        <select id="commendation-teacher-level" required>
-                            <option value="MYP">MYP</option>
-                            <option value="DP">DP</option>
-                            <option value="Both">MYP & DP</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="commendation-date-letter">Date of Letter:</label>
-                        <input type="date" id="commendation-date-letter" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="commendation-subject">Subject:</label>
-                        <input type="text" id="commendation-subject" required placeholder="e.g., Mathematics">
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Grade:</label>
-                        <select id="commendation-grade-filter">
-                            <option value="">All Grades</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Filter by Class:</label>
-                        <select id="commendation-class-filter">
-                            <option value="">All Classes</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Select Students:</label>
-                        <div id="commendation-student-list" class="student-list"></div>
-                    </div>
-
-                    <button type="submit" class="btn-primary">Generate Letters</button>
-                    <button type="button" class="btn-primary" onclick="sendToApprover('commendation')" style="display:none;background: linear-gradient(135deg, #28a745 0%, #20c997 100%); margin-top: 10px;">📧 Email to Approver</button>
-                </form>
-            </section>
+            <button class="btn-primary" onclick="triggerGeneration()">Generate All Selected Letters (.ZIP)</button>
         </main>
-
-        <footer style="text-align: center; padding: 30px 20px; color: #666; font-size: 0.9em; margin-top: 40px; border-top: 2px solid #ddd; background: #f9f9f9;">
-            <strong>© 2026 Teacher Email Generator. All Rights Reserved.</strong><br>
-            Proprietary software - Unauthorized use, copying, or distribution prohibited.<br>
-            <span style="font-size: 0.85em; color: #999;">Created by Louis Pienaar</span>
-        </footer>
-
-        <div id="loading" class="loading-overlay">
-            <div class="spinner"></div>
-            <p>Generating letters...</p>
-        </div>
     </div>
 
+    <div id="loading" class="loading-overlay"><h3>Building Documents...</h3></div>
+
     <script>
-        // Global variables
         let studentsData = [];
-        let currentWorkType = 'homework';
-        let letterheadImage = null;
+        let activeType = 'bunking';
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeNavigation();
-            initializeWorkTypeToggle();
-            loadLetterhead(); // Load letterhead.png
-            loadClasslistFromRepo(); // Try to load classlist.xls from repository
-            initializeForms();
-        });
+        const templates = {
+            bunking: { title: 'Bunking Lesson', inputs: [{ id: 'date', label: 'Date', type: 'date' }, { id: 'period', label: 'Period #', type: 'number' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not attend period ${i.period} ${m.subject} lesson on ${formatDate(i.date)}. By choosing to bunk ${s.p} lesson/s, ${s.subj} has put ${s.ref} at risk, because ${s.subj} will not be easily accounted for in any emergency.` },
+            disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue.` },
+            unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook, pen, ruler, etc.' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
+            absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction. Please be advised that these absences will lead to gaps in your child’s knowledge.` },
+            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school.` },
+            reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}. Please encourage your ${s.t} to attend the remaining sessions on ${i.fDates}.` },
+            performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}. All grades are accumulative and will negatively affect ${s.p} end of year grade.` },
+            commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. ${s.P} increased focus and commitment to the subject must be commended.` }
+        };
 
-        // Load letterhead image from repository
-        function loadLetterhead() {
-            const img = new Image();
-            img.crossOrigin = 'anonymous';
-            img.onload = function() {
-                letterheadImage = img;
-                console.log('Letterhead loaded successfully');
-            };
-            img.onerror = function() {
-                console.log('Letterhead not found, PDFs will be generated without background image');
-            };
-            img.src = 'letterhead.png';
-        }
-
-        // Try to load classlist.xls from repository
-        function loadClasslistFromRepo() {
-            fetch('classlist.xls')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('File not found');
-                    }
-                    return response.arrayBuffer();
-                })
-                .then(data => {
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-                    
-                    studentsData = jsonData.map((row, index) => {
-                        // Handle both formats: HOMEROOM/FULL NAME and Name/Class/Gender
-                        let name = row['FULL NAME'] || row.Name || row.name || '';
-                        let className = row.HOMEROOM || row.Class || row.class || row.Grade || row.grade || '';
-                        let gender = row.Gender || row.gender || 'male';
-                        
-                        // Extract gender from name or class if needed (defaults to male for boys' school)
-                        if (typeof gender === 'string') {
-                            gender = gender.toLowerCase();
-                        }
-                        
-                        return {
-                            id: index + 1,
-                            name: name,
-                            class: className,
-                            gender: gender
-                        };
-                    });
-                    
-                    console.log('Loaded students from repository:', studentsData.length);
-                    console.log('Sample student:', studentsData[0]);
-                    console.log('Sample classes:', studentsData.slice(0, 5).map(s => s.class));
-                    
-                    populateStudentLists();
-                    console.log('Loaded classlist.xls from repository');
-                })
-                .catch(error => {
-                    console.log('Could not load classlist.xls from repository, using sample data');
-                    console.error('Error:', error);
-                    useSampleData();
+        function init() {
+            const container = document.getElementById('forms-container');
+            container.innerHTML = '';
+            for (const [id, cfg] of Object.entries(templates)) {
+                const section = document.createElement('section');
+                section.id = `${id}-form`;
+                section.className = `form-section ${id === activeType ? 'active' : ''}`;
+                let inputsHtml = `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">`;
+                cfg.inputs.forEach(inp => {
+                    inputsHtml += `<div><label>${inp.label}</label><input type="${inp.type}" id="${id}-${inp.id}" placeholder="${inp.placeholder || ''}"></div>`;
                 });
-        }
+                inputsHtml += `</div>`;
+                section.innerHTML = `<h2>${cfg.title} Details</h2>${inputsHtml}`;
+                container.appendChild(section);
+            }
 
-        // Navigation between email types
-        function initializeNavigation() {
-            const navButtons = document.querySelectorAll('.nav-btn');
-            const formSections = document.querySelectorAll('.form-section');
-
-            navButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const type = this.dataset.type;
-
-                    navButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-
-                    formSections.forEach(section => section.classList.remove('active'));
-                    document.getElementById(`${type}-form`).classList.add('active');
+            document.getElementById('manual-upload').addEventListener('change', handleUpload);
+            document.getElementById('student-filter').addEventListener('keyup', (e) => filterStudents(e.target.value));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-btn, .form-section').forEach(el => el.classList.remove('active'));
+                    btn.classList.add('active');
+                    activeType = btn.dataset.type;
+                    document.getElementById(`${activeType}-form`).classList.add('active');
                 });
             });
         }
 
-        // Toggle between homework and classwork
-        function initializeWorkTypeToggle() {
-            const toggleButtons = document.querySelectorAll('.toggle-btn');
-            
-            toggleButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    currentWorkType = this.dataset.workType;
-                    
-                    toggleButtons.forEach(btn => btn.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    const cycleGroup = document.getElementById('cycle-group');
-                    if (currentWorkType === 'classwork') {
-                        cycleGroup.style.display = 'block';
-                    } else {
-                        cycleGroup.style.display = 'none';
-                    }
-                });
-            });
+        function toggleStudent(el) {
+            const cb = el.querySelector('input');
+            cb.checked = !cb.checked;
+            el.style.borderColor = cb.checked ? '#667eea' : '#eee';
+            el.style.background = cb.checked ? '#f0f4ff' : 'white';
         }
 
-        // Sample data
-        function useSampleData() {
-            console.log('Using sample data (classlist.xls not found)');
-            studentsData = [
-                { id: 1, name: 'Abdullah Fahad A Alsubaie', class: '9A', gender: 'male' },
-                { id: 2, name: 'Ahmed Mohamed Ali', class: '9A', gender: 'male' },
-                { id: 3, name: 'Sara Ahmed Hassan', class: '9B', gender: 'female' },
-                { id: 4, name: 'Omar Khalid Ibrahim', class: '10A', gender: 'male' },
-                { id: 5, name: 'Fatima Ali Mohammed', class: '10A', gender: 'female' },
-                { id: 6, name: 'Youssef Hassan Abdullah', class: '10B', gender: 'male' },
-                { id: 7, name: 'Layla Ibrahim Saleh', class: '11A', gender: 'female' },
-                { id: 8, name: 'Kareem Mohammed Yousef', class: '11A', gender: 'male' },
-                { id: 9, name: 'Noor Saleh Ahmed', class: '11B', gender: 'female' },
-                { id: 10, name: 'Hassan Ali Omar', class: '12A', gender: 'male' }
-            ];
-            
-            populateStudentLists();
-        }
-
-        // Populate all student lists
-        function populateStudentLists() {
-            populateStudentList('bunking');
-            populateStudentList('incomplete');
-            populateStudentList('commendation');
-            populateClassFilters();
-        }
-
-        // Populate individual student list
-        function populateStudentList(formType) {
-            const listContainer = document.getElementById(`${formType}-student-list`);
-            listContainer.innerHTML = '';
-            
-            const selectAllDiv = document.createElement('div');
-            selectAllDiv.className = 'select-all-container';
-            selectAllDiv.innerHTML = `
-                <label>
-                    <input type="checkbox" id="${formType}-select-all">
-                    <strong>Select All</strong>
-                </label>
-            `;
-            listContainer.appendChild(selectAllDiv);
-            
-            document.getElementById(`${formType}-select-all`).addEventListener('change', function() {
-                const checkboxes = listContainer.querySelectorAll('.student-checkbox:not([style*="display: none"])');
-                checkboxes.forEach(cb => {
-                    if (cb.parentElement.style.display !== 'none') {
-                        cb.checked = this.checked;
-                    }
-                });
-            });
-            
-            studentsData.forEach(student => {
-                const studentDiv = document.createElement('div');
-                studentDiv.className = 'student-item';
-                studentDiv.dataset.class = student.class;
-                studentDiv.dataset.studentId = student.id;
-                
-                studentDiv.innerHTML = `
-                    <input type="checkbox" id="${formType}-student-${student.id}" 
-                           class="student-checkbox" value="${student.id}">
-                    <label for="${formType}-student-${student.id}">
-                        <div class="student-info">
-                            <span>${student.name}</span>
-                            <span class="student-class">${student.class}</span>
-                        </div>
-                    </label>
-                `;
-                
-                listContainer.appendChild(studentDiv);
-            });
-        }
-
-        // Populate class filters
-        function populateClassFilters() {
-            const classes = [...new Set(studentsData.map(s => s.class))].sort();
-            
-            // Extract unique grades from homerooms (e.g., "10" from "10.1 Boys")
-            const grades = [...new Set(studentsData.map(s => {
-                const match = s.class.match(/^(\d+)/);
-                return match ? match[1] : null;
-            }).filter(g => g !== null))].sort();
-            
-            console.log('Extracted grades:', grades); // Debug log
-            console.log('All classes:', classes); // Debug log
-            
-            ['bunking', 'incomplete', 'commendation'].forEach(formType => {
-                // Populate grade filter
-                const gradeFilter = document.getElementById(`${formType}-grade-filter`);
-                gradeFilter.innerHTML = '<option value="">All Grades</option>';
-                
-                console.log(`Populating ${formType} grade filter with:`, grades);
-                
-                grades.forEach(grade => {
-                    const option = document.createElement('option');
-                    option.value = grade;
-                    option.textContent = `Grade ${grade}`;
-                    gradeFilter.appendChild(option);
-                });
-                
-                // Populate class filter (initially with all classes)
-                const classFilter = document.getElementById(`${formType}-class-filter`);
-                classFilter.innerHTML = '<option value="">All Classes</option>';
-                
-                classes.forEach(cls => {
-                    const option = document.createElement('option');
-                    option.value = cls;
-                    option.textContent = cls;
-                    classFilter.appendChild(option);
-                });
-                
-                // Add grade filter event listener
-                gradeFilter.addEventListener('change', function() {
-                    const selectedGrade = this.value;
-                    
-                    // Update class filter based on selected grade
-                    classFilter.innerHTML = '<option value="">All Classes</option>';
-                    const filteredClasses = classes.filter(cls => {
-                        if (!selectedGrade) return true;
-                        return cls.startsWith(selectedGrade + '.');
-                    });
-                    
-                    filteredClasses.forEach(cls => {
-                        const option = document.createElement('option');
-                        option.value = cls;
-                        option.textContent = cls;
-                        classFilter.appendChild(option);
-                    });
-                    
-                    // Reset class filter selection
-                    classFilter.value = '';
-                    
-                    // Filter students by grade
-                    filterStudentsByGradeAndClass(formType, selectedGrade, '');
-                });
-                
-                // Add class filter event listener
-                classFilter.addEventListener('change', function() {
-                    const selectedGrade = gradeFilter.value;
-                    const selectedClass = this.value;
-                    filterStudentsByGradeAndClass(formType, selectedGrade, selectedClass);
-                });
-            });
-        }
-
-        // Filter students by grade and class
-        function filterStudentsByGradeAndClass(formType, grade, className) {
-            const students = document.querySelectorAll(`#${formType}-student-list .student-item:not(.select-all-container)`);
-            
-            students.forEach(student => {
-                const studentClass = student.dataset.class;
-                let shouldShow = true;
-                
-                // Filter by grade
-                if (grade && !studentClass.startsWith(grade + '.')) {
-                    shouldShow = false;
-                }
-                
-                // Filter by specific class
-                if (className && studentClass !== className) {
-                    shouldShow = false;
-                }
-                
-                student.style.display = shouldShow ? 'flex' : 'none';
-            });
-        }
-
-        // Initialize forms
-        function initializeForms() {
-            document.getElementById('bunking-form-element').addEventListener('submit', handleBunkingSubmit);
-            document.getElementById('incomplete-form-element').addEventListener('submit', handleIncompleteSubmit);
-            document.getElementById('commendation-form-element').addEventListener('submit', handleCommendationSubmit);
-        }
-
-        // Handle bunking form submission
-        function handleBunkingSubmit(e) {
-            e.preventDefault();
-            
-            const selectedStudents = getSelectedStudents('bunking');
-            if (selectedStudents.length === 0) {
-                alert('Please select at least one student');
-                return;
-            }
-            
-            const formData = {
-                teacherTitle: document.getElementById('bunking-teacher-title').value,
-                teacher: document.getElementById('bunking-teacher').value,
-                teacherLevel: document.getElementById('bunking-teacher-level').value,
-                dateOfLetter: document.getElementById('bunking-date-letter').value,
-                dateOfIncident: document.getElementById('bunking-date-incident').value,
-                subject: document.getElementById('bunking-subject').value,
-                period: document.getElementById('bunking-period').value
-            };
-            
-            generateBunkingLetters(selectedStudents, formData);
-        }
-
-        // Handle incomplete work form submission
-        function handleIncompleteSubmit(e) {
-            e.preventDefault();
-            
-            const selectedStudents = getSelectedStudents('incomplete');
-            if (selectedStudents.length === 0) {
-                alert('Please select at least one student');
-                return;
-            }
-            
-            const formData = {
-                teacherTitle: document.getElementById('incomplete-teacher-title').value,
-                teacher: document.getElementById('incomplete-teacher').value,
-                teacherLevel: document.getElementById('incomplete-teacher-level').value,
-                dateOfLetter: document.getElementById('incomplete-date-letter').value,
-                subject: document.getElementById('incomplete-subject').value,
-                cycle: document.getElementById('incomplete-cycle').value,
-                task: document.getElementById('incomplete-task').value,
-                dueDate: document.getElementById('incomplete-due-date').value,
-                newDate: document.getElementById('incomplete-new-date').value,
-                workType: currentWorkType
-            };
-            
-            generateIncompleteLetters(selectedStudents, formData);
-        }
-
-        // Handle commendation form submission
-        function handleCommendationSubmit(e) {
-            e.preventDefault();
-            
-            const selectedStudents = getSelectedStudents('commendation');
-            if (selectedStudents.length === 0) {
-                alert('Please select at least one student');
-                return;
-            }
-            
-            const formData = {
-                teacherTitle: document.getElementById('commendation-teacher-title').value,
-                teacher: document.getElementById('commendation-teacher').value,
-                teacherLevel: document.getElementById('commendation-teacher-level').value,
-                dateOfLetter: document.getElementById('commendation-date-letter').value,
-                subject: document.getElementById('commendation-subject').value
-            };
-            
-            generateCommendationLetters(selectedStudents, formData);
-        }
-
-        // Get selected students
-        function getSelectedStudents(formType) {
-            const checkboxes = document.querySelectorAll(`#${formType}-student-list .student-checkbox:checked`);
-            const selected = [];
-            
-            checkboxes.forEach(checkbox => {
-                const studentId = parseInt(checkbox.value);
-                const student = studentsData.find(s => s.id === studentId);
-                if (student) selected.push(student);
-            });
-            
-            return selected;
-        }
-
-        // Generate bunking letters
-        async function generateBunkingLetters(students, formData) {
-            showLoading();
-            
-            const zip = new JSZip();
-            const { jsPDF } = window.jspdf;
-            
-            for (const student of students) {
-                const pdf = new jsPDF('landscape'); // Landscape orientation
-                
-                // Add letterhead image as background if available
-                if (letterheadImage) {
-                    const pageWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                }
-                
-                const pronoun = student.gender === 'female' ? 'her' : 'his';
-                const title = student.gender === 'female' ? 'daughter' : 'son';
-                const subjectPronoun = student.gender === 'female' ? 'she' : 'he';
-                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
-                
-                const dateFormatted = formatDate(formData.dateOfIncident);
-                const letterDateFormatted = formatDate(formData.dateOfLetter);
-                
-                //Landscape page dimensions
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 25;
-                const rightMargin = 25;
-                const topMargin = 50;
-                const maxWidth = pageWidth - leftMargin - rightMargin;
-                
-                // Add date at top left
-                pdf.setFontSize(12);
-                pdf.text(`Date: ${letterDateFormatted}`, leftMargin, topMargin);
-                
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('Bunking Class', pageWidth / 2, topMargin + 20, { align: 'center' });
-                
-                pdf.setFontSize(12);
-                pdf.setFont(undefined, 'normal');
-                
-                let y = topMargin + 35;
-                pdf.text(`Dear Parents of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 10;
-                
-                pdf.text('Good day to you.', leftMargin, y);
-                y += 10;
-                
-                const bodyText = `Kindly be informed that your ${title} did not attend period ${formData.period} ${formData.subject} lesson on ${dateFormatted}. Please be advised that by choosing to bunk ${pronoun} lesson/s, ${subjectPronoun} has put ${reflexivePronoun} at risk, because ${subjectPronoun} will not be easily accounted for/located in any potential emergency. Additionally, this will undoubtedly lead to gaps in ${pronoun} knowledge and understanding in the lesson ${subjectPronoun} has missed, which may well impact ${pronoun} Quarterly exam marks, GPA, and University pathways.`;
-                
-                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
-                splitBody.forEach(line => {
-                    if (y > pageHeight - 60) {
-                        pdf.addPage();
-                        if (letterheadImage) {
-                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                        }
-                        y = topMargin;
-                    }
-                    pdf.text(line, leftMargin, y);
-                    y += 7;
-                });
-                y += 10;
-                
-                const bodyText2 = `You are encouraged to speak at length with your ${title} about this incident so that there is no repeat and we will not need to take further, stronger measures as per the school's code of conduct. Please advise your ${title} as well to catch up with the material covered during that lesson so ${pronoun} GPA is not affected.`;
-                
-                const splitBody2 = pdf.splitTextToSize(bodyText2, maxWidth);
-                splitBody2.forEach(line => {
-                    if (y > pageHeight - 40) {
-                        pdf.addPage();
-                        if (letterheadImage) {
-                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                        }
-                        y = topMargin;
-                    }
-                    pdf.text(line, leftMargin, y);
-                    y += 7;
-                });
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                pdf.text('Many thanks for your continued support and understanding.', leftMargin, y);
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                
-                // Generate teacher level text
-                let teacherLevelText = '';
-                if (formData.teacherLevel === 'MYP') {
-                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
-                } else if (formData.teacherLevel === 'DP') {
-                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
-                } else {
-                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
-                }
-                
-               // Determine which administrator based on grade
-const gradeMatch = student.class.match(/^(\d+)/);
-const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no match
-const isMiddleSchool = grade >= 6 && grade <= 8;
-
-const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
-
-pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-pdf.text(adminName, pageWidth / 2 + 40, y);
-y += 7;
-pdf.setFontSize(10);
-pdf.text(teacherLevelText, leftMargin, y);
-pdf.text(adminTitle, pageWidth / 2 + 40, y);
-                
-                const filename = `Bunking_${student.name.replace(/\s+/g, '_')}.pdf`;
-                zip.file(filename, pdf.output('blob'));
-            }
-            
-            const content = await zip.generateAsync({ type: 'blob' });
-            saveAs(content, 'Bunking_Letters.zip');
-            
-            hideLoading();
-        }
-
-        // Generate incomplete work letters
-        async function generateIncompleteLetters(students, formData) {
-            showLoading();
-            
-            const zip = new JSZip();
-            const { jsPDF } = window.jspdf;
-            
-            for (const student of students) {
-                const pdf = new jsPDF('landscape'); // Landscape orientation
-                
-                // Add letterhead image as background if available
-                if (letterheadImage) {
-                    const pageWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                }
-                
-                const pronoun = student.gender === 'female' ? 'her' : 'his';
-                const title = student.gender === 'female' ? 'daughter' : 'son';
-                const subjPronoun = student.gender === 'female' ? 'she' : 'he';
-                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
-                const dateFormatted = formatDate(formData.dateOfLetter);
-                const dueDateFormatted = formatDate(formData.dueDate);
-                const newDateFormatted = formatDate(formData.newDate);
-                
-                // Landscape page dimensions
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 25;
-                const rightMargin = 25;
-                const topMargin = 50;
-                const maxWidth = pageWidth - leftMargin - rightMargin;
-                
-                // Add date at top left
-                pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
-                
-                let y = topMargin + 20;
-                pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 10;
-                
-                pdf.text('Assalmu Aleikum', leftMargin, y);
-                y += 10;
-                
-                let bodyText;
-              if (formData.workType === 'homework') {
-    const firstName = student.name.split(' ')[0];
-    bodyText = `Kindly be informed that your ${title} has failed to submit ${pronoun} ${formData.subject} homework (${formData.task}), and was due ${dueDateFormatted}. Please note that ${firstName} will be given an extension till ${newDateFormatted}. If ${subjPronoun} fails to submit, the homework policy will apply.`;
-               } else {
-    const firstName = student.name.split(' ')[0];
-    bodyText = `As a school committed to keeping parents informed about the progress of their children, kindly note that your ${title} has failed to complete ${pronoun} ${formData.subject} cycle ${formData.cycle} classwork (${formData.task}), which was due on ${dueDateFormatted}. This will impact negatively on ${pronoun} Quarter 4 results.\n\n${firstName} has until ${newDateFormatted} to submit the completed work on Managebac`;
-}
-                
-                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
-                splitBody.forEach(line => {
-                    if (y > pageHeight - 40) {
-                        pdf.addPage();
-                        if (letterheadImage) {
-                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                        }
-                        y = topMargin;
-                    }
-                    pdf.text(line, leftMargin, y);
-                    y += 7;
-                });
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                pdf.text('Respectfully', leftMargin, y);
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                
-                // Generate teacher level text
-                let teacherLevelText = '';
-                if (formData.teacherLevel === 'MYP') {
-                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
-                } else if (formData.teacherLevel === 'DP') {
-                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
-                } else {
-                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
-                }
-                
-              const gradeMatch = student.class.match(/^(\d+)/);
-const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9; // default to 9 if no match
-const isMiddleSchool = grade >= 6 && grade <= 8;
-
-const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
-
-pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-pdf.text(adminName, pageWidth / 2 + 40, y);
-y += 7;
-pdf.setFontSize(10);
-pdf.text(teacherLevelText, leftMargin, y);
-pdf.text(adminTitle, pageWidth / 2 + 40, y);
-            
-             const filename = `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_${student.name.replace(/\s+/g, '_')}.pdf`;
-                zip.file(filename, pdf.output('blob'));
-            }
-            const content = await zip.generateAsync({ type: 'blob' });
-            saveAs(content, `${formData.workType === 'homework' ? 'Homework' : 'Classwork'}_Letters.zip`);
-            
-            hideLoading();
-        }
-
-        // Generate commendation letters
-        async function generateCommendationLetters(students, formData) {
-            showLoading();
-            
-            const zip = new JSZip();
-            const { jsPDF } = window.jspdf;
-            
-            for (const student of students) {
-                const pdf = new jsPDF('landscape'); // Landscape orientation
-                
-                // Add letterhead image as background if available
-                if (letterheadImage) {
-                    const pageWidth = pdf.internal.pageSize.getWidth();
-                    const pageHeight = pdf.internal.pageSize.getHeight();
-                    pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                }
-                
-                const pronoun = student.gender === 'female' ? 'Her' : 'His';
-                const lowerPronoun = pronoun.toLowerCase();
-                const firstName = student.name.split(' ')[0];
-                const reflexivePronoun = student.gender === 'female' ? 'herself' : 'himself';
-                
-                const dateFormatted = formatDate(formData.dateOfLetter);
-                
-                // Landscape page dimensions
-                const pageWidth = pdf.internal.pageSize.getWidth();
-                const pageHeight = pdf.internal.pageSize.getHeight();
-                const leftMargin = 25;
-                const rightMargin = 25;
-                const topMargin = 50;
-                const maxWidth = pageWidth - leftMargin - rightMargin;
-                
-                // Add date at top left
-                pdf.setFontSize(12);
-                pdf.text(`Date: ${dateFormatted}`, leftMargin, topMargin);
-                
-                pdf.setFontSize(16);
-                pdf.setFont(undefined, 'bold');
-                pdf.text('Commendation', pageWidth / 2, topMargin + 10, { align: 'center' });
-                
-                pdf.setFontSize(12);
-                pdf.setFont(undefined, 'normal');
-                
-                let y = topMargin + 20;
-                pdf.text(`Dear Parent of ${student.name} in ${student.class}`, leftMargin, y);
-                y += 10;
-                
-                const bodyText = `We are pleased to inform you that ${firstName} has shown a pleasing improvement in ${formData.subject}. ${pronoun} increased focus and commitment to the subject must be commended. We look forward to helping ${lowerPronoun} achieve ${lowerPronoun} maximum potential. Keep up the good work, ${firstName}.`;
-                
-                const splitBody = pdf.splitTextToSize(bodyText, maxWidth);
-                splitBody.forEach(line => {
-                    if (y > pageHeight - 40) {
-                        pdf.addPage();
-                        if (letterheadImage) {
-                            pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                        }
-                        y = topMargin;
-                    }
-                    pdf.text(line, leftMargin, y);
-                    y += 7;
-                });
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                pdf.text('Thank you.', leftMargin, y);
-                y += 10;
-                
-                if (y > pageHeight - 40) {
-                    pdf.addPage();
-                    if (letterheadImage) {
-                        pdf.addImage(letterheadImage, 'PNG', 0, 0, pageWidth, pageHeight);
-                    }
-                    y = topMargin;
-                }
-                
-                // Generate teacher level text
-                let teacherLevelText = '';
-                if (formData.teacherLevel === 'MYP') {
-                    teacherLevelText = `MYP ${formData.subject} Teacher - Boys`;
-                } else if (formData.teacherLevel === 'DP') {
-                    teacherLevelText = `DP ${formData.subject} Teacher - Boys`;
-                } else {
-                    teacherLevelText = `MYP & DP ${formData.subject} Teacher - Boys`;
-                }
-                
-                // Determine which administrator based on grade
-const gradeMatch = student.class.match(/^(\d+)/);
-const grade = gradeMatch ? parseInt(gradeMatch[1]) : 9;
-const isMiddleSchool = grade >= 6 && grade <= 8;
-
-const adminName = isMiddleSchool ? 'Mr. Gregory Lewis' : 'Mr. Atiq Salakh Uddin';
-const adminTitle = isMiddleSchool ? 'Head of Boys (Grades 6-8)' : 'Head of Upper School – Boys (Grades 9-12)';
-
-pdf.text(`${formData.teacherTitle}. ${formData.teacher}`, leftMargin, y);
-pdf.text(adminName, pageWidth / 2 + 40, y);
-y += 7;
-pdf.setFontSize(10);
-pdf.text(teacherLevelText, leftMargin, y);
-pdf.text(adminTitle, pageWidth / 2 + 40, y);
-            
-             const filename = `Commendation_${student.name.replace(/\s+/g, '_')}.pdf`;
-                zip.file(filename, pdf.output('blob'));
-            }
-            
-            const content = await zip.generateAsync({ type: 'blob' });
-            saveAs(content, 'Commendation_Letters.zip');
-            
-            hideLoading();
-        }
-
-        // Helper functions
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = date.getDate();
-            const suffix = getDaySuffix(day);
-            const month = date.toLocaleDateString('en-US', { month: 'long' });
-            const year = date.getFullYear();
-            return `${day}${suffix} ${month}, ${year}`;
-        }
-
-        function getDaySuffix(day) {
-            if (day > 3 && day < 21) return 'th';
-            switch (day % 10) {
-                case 1: return 'st';
-                case 2: return 'nd';
-                case 3: return 'rd';
-                default: return 'th';
-            }
-        }
-
-        function showLoading() {
+        function handleUpload(e) {
+            const file = e.target.files[0];
+            if (!file) return;
             document.getElementById('loading').classList.add('active');
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
+                    const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    studentsData = json.map((r, i) => ({
+                        id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase()
+                    }));
+                    renderStudents();
+                } catch(err) { alert("Error parsing file."); }
+                document.getElementById('loading').classList.remove('active');
+            };
+            reader.readAsArrayBuffer(file);
         }
 
-        function hideLoading() {
+        function renderStudents() {
+            const grid = document.getElementById('student-grid');
+            grid.innerHTML = studentsData.map(s => `
+                <div class="student-item" onclick="toggleStudent(this)">
+                    <div class="checkbox-container">
+                        <input type="checkbox" id="check-${s.id}" class="student-checkbox" value="${s.id}">
+                    </div>
+                    <div class="student-info-row">
+                        <span class="student-name">${s.name}</span>
+                        <span class="student-class">${s.class}</span>
+                    </div>
+                </div>`).join('');
+        }
+
+        function filterStudents(q) {
+            const term = q.toLowerCase();
+            document.querySelectorAll('.student-item').forEach(el => el.style.display = el.textContent.toLowerCase().includes(term) ? 'flex' : 'none');
+        }
+
+        function getDaySuffix(n) { if (n > 3 && n < 21) return 'th'; switch (n % 10) { case 1: return "st"; case 2: return "nd"; case 3: return "rd"; default: return "th"; } }
+        function formatDate(dStr) { 
+            const d = new Date(dStr); 
+            return isNaN(d) ? dStr : `${d.getDate()}${getDaySuffix(d.getDate())} ${d.toLocaleDateString('en-US',{month:'long'})}, ${d.getFullYear()}`; 
+        }
+
+        async function triggerGeneration() {
+            const selectedIds = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(c => c.value);
+            if (selectedIds.length === 0) return alert("Select students first.");
+            const tName = document.getElementById('global-teacher').value;
+            const subject = document.getElementById('global-subject').value;
+            const tTitle = document.getElementById('global-title').value;
+            if (!tName || !subject) return alert("Fill profile details.");
+
+            document.getElementById('loading').classList.add('active');
+            const zip = new JSZip();
+            const { jsPDF } = window.jspdf;
+
+            for (const id of selectedIds) {
+                const s = studentsData[id];
+                const doc = new jsPDF('landscape');
+                const pMap = {
+                    name: s.name, t: s.gender === 'female' ? 'daughter' : 'son', p: s.gender === 'female' ? 'her' : 'his', P: s.gender === 'female' ? 'Her' : 'His',
+                    subj: s.gender === 'female' ? 'she' : 'he', Subj: s.gender === 'female' ? 'She' : 'He', obj: s.gender === 'female' ? 'her' : 'him', ref: s.gender === 'female' ? 'herself' : 'himself'
+                };
+                const currentInputs = {};
+                templates[activeType].inputs.forEach(inp => currentInputs[inp.id] = document.getElementById(`${activeType}-${inp.id}`).value);
+                const bodyText = templates[activeType].getBody(pMap, currentInputs, { subject });
+                const gradeNum = parseInt(s.class) || 9;
+                const admin = gradeNum <= 8 ? "Mr. Gregory Lewis" : "Mr. Atiq Salakh Uddin";
+
+                doc.setFontSize(12).text(`Date: ${formatDate(new Date())}`, 25, 30);
+                doc.text(`Dear Parent of ${s.name} (${s.class}),`, 25, 50);
+                doc.setFontSize(11).text(doc.splitTextToSize(bodyText, 250), 25, 70);
+                doc.text(`${tTitle}. ${tName}`, 25, 170); doc.text(admin, 180, 170);
+                zip.file(`${activeType.toUpperCase()}_${s.name}.pdf`, doc.output('blob'));
+            }
+            const content = await zip.generateAsync({type:'blob'});
+            saveAs(content, `jks_letters_${activeType}.zip`);
             document.getElementById('loading').classList.remove('active');
         }
 
-        // Send email to approver
-        function sendToApprover(formType) {
-            const selectedStudents = getSelectedStudents(formType);
-            
-            if (selectedStudents.length === 0) {
-                alert('Please select at least one student first');
-                return;
-            }
-            
-            // CHANGE THIS EMAIL ADDRESS TO YOUR APPROVER'S EMAIL
-            const approverEmail = 'approver@jeddahschool.edu.sa';
-            
-            // Get letter type for subject
-            let letterType = '';
-            if (formType === 'bunking') {
-                letterType = 'Bunking Class';
-            } else if (formType === 'incomplete') {
-                letterType = currentWorkType === 'homework' ? 'Incomplete Homework' : 'Incomplete Classwork';
-            } else {
-                letterType = 'Commendation';
-            }
-            
-            // Get teacher name
-            let teacherName = document.getElementById(`${formType}-teacher`).value || 'Teacher';
-            
-            // Create student list for email body
-            const studentList = selectedStudents.map(s => `- ${s.name} (${s.class})`).join('\n');
-            
-            const subject = encodeURIComponent(`Parent Letters - ${letterType}`);
-            const body = encodeURIComponent(
-`Dear Approver,
-
-Please approve the following parent letters for ${letterType}.
-
-Teacher: ${teacherName}
-Number of Students: ${selectedStudents.length}
-
-Students:
-${studentList}
-
-The letter PDFs will be attached separately.
-
-Best regards,
-${teacherName}`
-            );
-            
-            window.location.href = `mailto:${approverEmail}?subject=${subject}&body=${body}`;
-        }
+        init();
     </script>
 </body>
 </html>
