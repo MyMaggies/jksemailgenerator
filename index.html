@@ -27,14 +27,11 @@
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
         .student-list-container { max-height: 400px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
         .student-item { display: flex; align-items: center; padding: 10px 15px; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
-        .student-item:hover { background: #f8f9ff; border-color: #667eea; }
         .checkbox-container { width: 40px; display: flex; justify-content: center; }
         .student-item input[type="checkbox"] { transform: scale(1.3); pointer-events: none; }
         .student-info-row { display: flex; align-items: center; justify-content: space-between; flex: 1; padding-left: 10px; }
         .student-name { font-weight: 600; color: #333; font-size: 0.95em; }
         .student-class { color: #666; font-size: 0.85em; text-align: right; }
-        .filter-bar { margin-bottom: 5px; border: 2px solid #667eea; }
-        .search-tip { font-size: 0.85em; color: #666; margin-bottom: 15px; display: block; font-style: italic; }
         .btn-primary { width: 100%; padding: 18px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: 600; cursor: pointer; margin-top: 20px; }
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); color: white; justify-content: center; align-items: center; z-index: 2000; }
         .loading-overlay.active { display: flex; }
@@ -77,8 +74,8 @@
             <div id="forms-container"></div>
             <div class="form-group" style="margin-top:30px;">
                 <label>Step 2: Select Students</label>
-                <input type="text" class="filter-bar" placeholder="🔍 Filter list..." id="student-filter">
-                <span class="search-tip">Search by name or class (e.g., "6.1")</span>
+                <input type="text" class="filter-bar" placeholder="🔍 Filter list..." id="student-filter" style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 8px; margin-bottom: 5px;">
+                <span style="font-size: 0.85em; color: #666; margin-bottom: 15px; display: block; font-style: italic;">Search by name or class (e.g., "6.1")</span>
                 <div id="student-grid" class="student-list-container">Upload classlist to begin...</div>
             </div>
             <button class="btn-primary" onclick="triggerGeneration()">Generate All Selected Letters (.ZIP)</button>
@@ -100,18 +97,17 @@
                     { id: 'newDate', label: 'Extension Date', type: 'date' }
                 ],
                 getBody: (s, i, m) => {
-                    const salutation = `Assalmu Aleikum`;
                     const workText = i.type === 'Homework' 
                         ? `Kindly be informed that your ${s.t} has failed to submit ${s.p} ${m.subject} homework (${i.task}), which was due ${formatDate(i.due)}. Please note that ${s.name.split(' ')[0]} will be given an extension till ${formatDate(i.newDate)}. If ${s.subj} fails to submit, the policy will apply.`
                         : `As a school committed to keeping parents informed, kindly note that your ${s.t} has failed to complete ${s.p} ${m.subject} classwork (${i.task}), which was due on ${formatDate(i.due)}. This will impact results. ${s.name.split(' ')[0]} has until ${formatDate(i.newDate)} to submit on Managebac.`;
-                    return `${salutation}\n\n${workText}`;
+                    return `Assalmu Aleikum\n\n${workText}`;
                 }
             },
             bunking: { title: 'Bunking Lesson', inputs: [{ id: 'date', label: 'Date', type: 'date' }, { id: 'period', label: 'Period #', type: 'number' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not attend period ${i.period} ${m.subject} lesson on ${formatDate(i.date)}. By choosing to bunk ${s.p} lesson/s, ${s.subj} has put ${s.ref} at risk, because ${s.subj} will not be easily accounted for in any emergency.` },
-            disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue.` },
+            disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue, reinforcing that disruptive behavior is not what is expected from an MYP student.` },
             unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook and pen' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
             absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction.` },
-            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school.` },
+            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school and use it consistently for assessment and feedback.` },
             reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}. Please encourage your ${s.t} to attend the remaining sessions on ${i.fDates}.` },
             performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}. All grades are accumulative and will negatively affect ${s.p} end of year grade.` },
             commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. ${s.P} increased focus and commitment to the subject must be commended.` }
@@ -195,26 +191,44 @@
                 templates[activeType].inputs.forEach(inp => currentInputs[inp.id] = document.getElementById(`${activeType}-${inp.id}`).value);
                 const bodyText = templates[activeType].getBody(pMap, currentInputs, { subject });
 
+                // Add Letterhead Background
                 doc.addImage(img, 'PNG', 0, 0, 297, 210);
-                doc.setFontSize(12).text(`Date: ${formatDate(new Date())}`, 25, 40);
+                
+                // 1. Position Date (Shifted Down to 65mm)
+                doc.setFontSize(12).setFont(undefined, 'normal').text(`Date: ${formatDate(new Date())}`, 25, 65);
 
+                // 2. Centered Title (Bold, Underlined, Positioned at 80mm)
                 const letterTitle = templates[activeType].title.toUpperCase();
                 doc.setFont(undefined, 'bold').setFontSize(14);
-                const xTitle = (297 - doc.getTextWidth(letterTitle)) / 2;
-                doc.text(letterTitle, xTitle, 55);
-                doc.setLineWidth(0.5).line(xTitle, 56, xTitle + doc.getTextWidth(letterTitle), 56);
+                const titleWidth = doc.getTextWidth(letterTitle);
+                const xTitle = (297 - titleWidth) / 2;
+                doc.text(letterTitle, xTitle, 80);
+                doc.setLineWidth(0.5).line(xTitle, 81, xTitle + titleWidth, 81);
 
-                doc.setFont(undefined, 'bold').setFontSize(12).text(`Dear Parent of ${s.name} (${s.class}),`, 25, 70);
-                doc.setFont(undefined, 'normal').setFontSize(11).text(doc.splitTextToSize(bodyText, 250), 25, 85);
+                // 3. Greeting (Shifted Down to 95mm)
+                doc.setFont(undefined, 'bold').setFontSize(12).text(`Dear Parent of ${s.name} (${s.class}),`, 25, 95);
 
+                // 4. Body (Shifted Down to 110mm, Dynamically Measures Height)
+                doc.setFont(undefined, 'normal').setFontSize(11);
+                const bodyLines = doc.splitTextToSize(bodyText, 250);
+                doc.text(bodyLines, 25, 110);
+
+                // Dynamic Signature Placement (20mm below body text)
+                const lineHeight = 11 * 0.3528; // mm per line
+                const totalBodyHeight = bodyLines.length * lineHeight;
+                const sigY = 110 + totalBodyHeight + 20;
+
+                // 5. Signatures (Follows Text)
                 const gradeNum = parseInt(s.class) || 9;
                 const admin = gradeNum <= 8 ? "Mr. Gregory Lewis" : "Mr. Atiq Salakh Uddin";
                 const adminTitle = gradeNum <= 8 ? "Head of Boys (Gr 6 - 8)" : "Academic Head (Boys Gr 9 - 12)";
                 const teacherFullTitle = `${tLevel} ${subject} Teacher`;
 
-                doc.setFont(undefined, 'bold').text(`${tTitle}. ${tName}`, 25, 170);
-                doc.text(admin, 180, 170);
-                doc.setFont(undefined, 'normal').setFontSize(10).text(teacherFullTitle, 25, 176).text(adminTitle, 180, 176);
+                doc.setFont(undefined, 'bold').text(`${tTitle}. ${tName}`, 25, sigY);
+                doc.text(admin, 180, sigY);
+                doc.setFont(undefined, 'normal').setFontSize(10);
+                doc.text(teacherFullTitle, 25, sigY + 6);
+                doc.text(adminTitle, 180, sigY + 6);
 
                 zip.file(`${activeType.toUpperCase()}_${s.name}.pdf`, doc.output('blob'));
             }
