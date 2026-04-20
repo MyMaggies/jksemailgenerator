@@ -23,7 +23,8 @@
         .form-section.active { display: block; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
-        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
+        input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; font-family: 'Segoe UI', sans-serif; }
+        textarea { resize: vertical; min-height: 100px; }
         
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
         .instruction-text { font-size: 0.9em; color: #4a5568; margin-bottom: 12px; line-height: 1.4; }
@@ -60,6 +61,7 @@
             <button class="nav-btn" data-type="performance">Performance</button>
             <button class="nav-btn" data-type="retake">Retake Quiz</button>
             <button class="nav-btn" data-type="commendation">Commendation</button>
+            <button class="nav-btn" data-type="custom" style="background: #eef2ff; color: #4c51bf;">Custom Letter</button>
         </nav>
         <main>
             <div class="upload-section">
@@ -132,7 +134,15 @@
                 ], 
                 getBody: (s, i, m) => `Please be informed that your ${s.t} has received a score of ${i.score} in the ${i.task} assessment for ${m.subject}. A retake quiz has been scheduled for ${formatDate(i.rDate)} to support ${s.obj} in these concepts. Please encourage your child to come prepared and to study for the retake to avoid any negative impact on ${s.p} grade, as this will affect ${s.p} end-of-year final grade and/or GPA.` 
             },
-            commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. Your ${s.t}'s increased focus is commended.` }
+            commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. Your ${s.t}'s increased focus is commended.` },
+            custom: {
+                title: 'Custom Letter',
+                inputs: [
+                    { id: 'title', label: 'Letter Title (Underlined Header)', type: 'text', placeholder: 'e.g. Field Trip Notice' },
+                    { id: 'body', label: 'Message Body', type: 'textarea', placeholder: 'Write your custom message here. Date, Greetings, and Signatures are added automatically.' }
+                ],
+                getBody: (s, i, m) => i.body
+            }
         };
 
         function init() {
@@ -142,11 +152,17 @@
                 const section = document.createElement('section');
                 section.id = `${id}-form`;
                 section.className = `form-section ${id === activeType ? 'active' : ''}`;
-                let inputsHtml = `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">`;
+                
+                let inputsHtml = id === 'custom' 
+                    ? `<div style="display:flex; flex-direction:column; gap:15px; margin-bottom:20px;">` 
+                    : `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">`;
+                
                 cfg.inputs.forEach(inp => {
                     inputsHtml += `<div><label>${inp.label}</label>`;
                     if (inp.type === 'select') {
                         inputsHtml += `<select id="${id}-${inp.id}">${inp.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+                    } else if (inp.type === 'textarea') {
+                        inputsHtml += `<textarea id="${id}-${inp.id}" placeholder="${inp.placeholder || ''}" rows="6"></textarea>`;
                     } else {
                         inputsHtml += `<input type="${inp.type}" id="${id}-${inp.id}" placeholder="${inp.placeholder || ''}">`;
                     }
@@ -257,6 +273,7 @@
             for (const id of selectedIds) {
                 const s = studentsData[id], doc = new jsPDF('landscape', 'mm', 'a4');
                 const pMap = { name: s.name, t: s.gender === 'female' ? 'daughter' : 'son', p: s.gender === 'female' ? 'her' : 'his', P: s.gender === 'female' ? 'Her' : 'His', subj: s.gender === 'female' ? 'she' : 'he', Subj: s.gender === 'female' ? 'She' : 'He', obj: s.gender === 'female' ? 'her' : 'him', ref: s.gender === 'female' ? 'herself' : 'himself' };
+                
                 const currentInputs = {};
                 templates[activeType].inputs.forEach(inp => currentInputs[inp.id] = document.getElementById(`${activeType}-${inp.id}`).value);
                 const bodyText = templates[activeType].getBody(pMap, currentInputs, { subject });
@@ -264,7 +281,12 @@
                 doc.addImage(img, 'PNG', 0, 0, 297, 210);
                 doc.setFontSize(12).setFont(undefined, 'normal').text(`Date: ${formatDate(new Date())}`, 25, 65);
 
-                const letterTitle = templates[activeType].title.toUpperCase();
+                // Custom Logic for Title
+                let letterTitle = templates[activeType].title.toUpperCase();
+                if (activeType === 'custom' && currentInputs.title) {
+                    letterTitle = currentInputs.title.toUpperCase();
+                }
+
                 doc.setFont(undefined, 'bold').setFontSize(14);
                 const xTitle = (297 - doc.getTextWidth(letterTitle)) / 2;
                 doc.text(letterTitle, xTitle, 80);
