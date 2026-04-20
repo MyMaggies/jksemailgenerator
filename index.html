@@ -9,69 +9,46 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script type="text/javascript" src="https://js.live.net/v7.2/OneDrive.js"></script>
     
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
         .container { max-width: 950px; margin: 0 auto; background: white; border-radius: 15px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); overflow: hidden; }
         header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-        
         .email-type-nav { display: flex; flex-wrap: wrap; background: #f5f5f5; border-bottom: 2px solid #ddd; }
         .nav-btn { flex: 1; min-width: 120px; padding: 15px; background: transparent; border: none; font-size: 0.85em; font-weight: 600; color: #666; cursor: pointer; border-right: 1px solid #ddd; transition: 0.2s; }
         .nav-btn.active { background: white; color: #667eea; border-bottom: 3px solid #667eea; }
-        
         main { padding: 30px; }
         .form-section { display: none; }
         .form-section.active { display: block; }
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
-        
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
-        
-        /* Fixed Horizontal List Layout */
-        .student-list-container { max-height: 450px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
-        
-        .student-item { 
-            display: flex; 
-            align-items: center; 
-            padding: 10px 15px; 
-            background: white; 
-            border: 1px solid #eee; 
-            border-radius: 8px; 
-            margin-bottom: 6px;
-            cursor: pointer; 
-            transition: 0.2s;
-        }
+        .student-list-container { max-height: 400px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
+        .student-item { display: flex; align-items: center; padding: 10px 15px; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
         .student-item:hover { background: #f8f9ff; border-color: #667eea; }
-        
-        /* The Fix: Narrow Checkbox & Clean Alignment */
         .checkbox-container { width: 40px; display: flex; justify-content: center; }
         .student-item input[type="checkbox"] { transform: scale(1.3); pointer-events: none; }
-        
         .student-info-row { display: flex; align-items: center; justify-content: space-between; flex: 1; padding-left: 10px; }
         .student-name { font-weight: 600; color: #333; font-size: 0.95em; }
         .student-class { color: #666; font-size: 0.85em; text-align: right; }
-        
         .filter-bar { margin-bottom: 5px; border: 2px solid #667eea; }
         .search-tip { font-size: 0.85em; color: #666; margin-bottom: 15px; display: block; font-style: italic; }
-        
         .btn-primary { width: 100%; padding: 18px; background: #667eea; color: white; border: none; border-radius: 10px; font-size: 1.2em; font-weight: 600; cursor: pointer; margin-top: 20px; }
         .loading-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); color: white; justify-content: center; align-items: center; z-index: 2000; }
         .loading-overlay.active { display: flex; }
     </style>
 </head>
 <body>
-
     <div class="container">
         <header>
             <h1>JKS Teacher Portal</h1>
             <p>Automated Parent Communication</p>
         </header>
-
         <nav class="email-type-nav">
-            <button class="nav-btn active" data-type="bunking">Bunking</button>
+            <button class="nav-btn active" data-type="incomplete">Incomplete Work</button>
+            <button class="nav-btn" data-type="bunking">Bunking</button>
             <button class="nav-btn" data-type="disruption">Disruption</button>
             <button class="nav-btn" data-type="unprepared">Unprepared</button>
             <button class="nav-btn" data-type="absence">Absence</button>
@@ -80,7 +57,6 @@
             <button class="nav-btn" data-type="performance">Performance</button>
             <button class="nav-btn" data-type="commendation">Commendation</button>
         </nav>
-
         <main>
             <div class="upload-section">
                 <h3>Step 1: Connect Student Data</h3>
@@ -88,49 +64,53 @@
                     <label>Manual Excel Upload</label>
                     <input type="file" id="manual-upload" accept=".xlsx, .xls">
                 </div>
-                <div style="margin-top: 15px; opacity: 0.6;">
-                    <label>OneDrive Sync (Pending IT Approval)</label>
-                    <div style="display: flex; gap: 10px;">
-                        <button disabled style="background:#ccc; padding:10px; border-radius:5px; border:none; color:white; flex:1; cursor:not-allowed;">♂️ Boys Campus</button>
-                        <button disabled style="background:#ccc; padding:10px; border-radius:5px; border:none; color:white; flex:1; cursor:not-allowed;">♀️ Girls Campus</button>
-                    </div>
-                </div>
             </div>
-
             <div class="form-group" style="background:#f9f9f9; padding:20px; border-radius:10px;">
                 <label>Teacher Profile</label>
-                <div style="display: flex; gap: 10px;">
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
                     <select id="global-title" style="width:100px;"><option>Mr</option><option>Ms</option><option>Mrs</option></select>
                     <input type="text" id="global-teacher" placeholder="Full Name">
                     <input type="text" id="global-subject" placeholder="Subject">
-                    <select id="global-level"><option>MYP</option><option>DP</option></select>
                 </div>
+                <select id="global-level"><option value="MYP">MYP</option><option value="DP">DP</option><option value="MYP & DP">MYP & DP</option></select>
             </div>
-
             <div id="forms-container"></div>
-
             <div class="form-group" style="margin-top:30px;">
                 <label>Step 2: Select Students</label>
                 <input type="text" class="filter-bar" placeholder="🔍 Filter list..." id="student-filter">
-                <span class="search-tip">Search by student name or class (e.g., "6.1")</span>
+                <span class="search-tip">Search by name or class (e.g., "6.1")</span>
                 <div id="student-grid" class="student-list-container">Upload classlist to begin...</div>
             </div>
-
             <button class="btn-primary" onclick="triggerGeneration()">Generate All Selected Letters (.ZIP)</button>
         </main>
     </div>
-
     <div id="loading" class="loading-overlay"><h3>Building Documents...</h3></div>
 
     <script>
         let studentsData = [];
-        let activeType = 'bunking';
+        let activeType = 'incomplete';
 
         const templates = {
+            incomplete: { 
+                title: 'Incomplete Work', 
+                inputs: [
+                    { id: 'type', label: 'Work Type', type: 'select', options: ['Homework', 'Classwork'] },
+                    { id: 'task', label: 'Task Name', type: 'text', placeholder: 'e.g. Science Cycle 3' },
+                    { id: 'due', label: 'Original Due Date', type: 'date' },
+                    { id: 'newDate', label: 'Extension Date', type: 'date' }
+                ],
+                getBody: (s, i, m) => {
+                    const salutation = `Assalmu Aleikum`;
+                    const workText = i.type === 'Homework' 
+                        ? `Kindly be informed that your ${s.t} has failed to submit ${s.p} ${m.subject} homework (${i.task}), which was due ${formatDate(i.due)}. Please note that ${s.name.split(' ')[0]} will be given an extension till ${formatDate(i.newDate)}. If ${s.subj} fails to submit, the policy will apply.`
+                        : `As a school committed to keeping parents informed, kindly note that your ${s.t} has failed to complete ${s.p} ${m.subject} classwork (${i.task}), which was due on ${formatDate(i.due)}. This will impact results. ${s.name.split(' ')[0]} has until ${formatDate(i.newDate)} to submit on Managebac.`;
+                    return `${salutation}\n\n${workText}`;
+                }
+            },
             bunking: { title: 'Bunking Lesson', inputs: [{ id: 'date', label: 'Date', type: 'date' }, { id: 'period', label: 'Period #', type: 'number' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not attend period ${i.period} ${m.subject} lesson on ${formatDate(i.date)}. By choosing to bunk ${s.p} lesson/s, ${s.subj} has put ${s.ref} at risk, because ${s.subj} will not be easily accounted for in any emergency.` },
             disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue.` },
-            unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook, pen, ruler, etc.' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
-            absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction. Please be advised that these absences will lead to gaps in your child’s knowledge.` },
+            unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook and pen' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
+            absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction.` },
             copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school.` },
             reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}. Please encourage your ${s.t} to attend the remaining sessions on ${i.fDates}.` },
             performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}. All grades are accumulative and will negatively affect ${s.p} end of year grade.` },
@@ -146,112 +126,101 @@
                 section.className = `form-section ${id === activeType ? 'active' : ''}`;
                 let inputsHtml = `<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:15px; margin-bottom:20px;">`;
                 cfg.inputs.forEach(inp => {
-                    inputsHtml += `<div><label>${inp.label}</label><input type="${inp.type}" id="${id}-${inp.id}" placeholder="${inp.placeholder || ''}"></div>`;
+                    inputsHtml += `<div><label>${inp.label}</label>`;
+                    if (inp.type === 'select') {
+                        inputsHtml += `<select id="${id}-${inp.id}">${inp.options.map(o => `<option value="${o}">${o}</option>`).join('')}</select>`;
+                    } else {
+                        inputsHtml += `<input type="${inp.type}" id="${id}-${inp.id}" placeholder="${inp.placeholder || ''}">`;
+                    }
+                    inputsHtml += `</div>`;
                 });
                 inputsHtml += `</div>`;
                 section.innerHTML = `<h2>${cfg.title} Details</h2>${inputsHtml}`;
                 container.appendChild(section);
             }
-
             document.getElementById('manual-upload').addEventListener('change', handleUpload);
             document.getElementById('student-filter').addEventListener('keyup', (e) => filterStudents(e.target.value));
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.nav-btn, .form-section').forEach(el => el.classList.remove('active'));
-                    btn.classList.add('active');
-                    activeType = btn.dataset.type;
+                    btn.classList.add('active'); activeType = btn.dataset.type;
                     document.getElementById(`${activeType}-form`).classList.add('active');
                 });
             });
         }
 
         function toggleStudent(el) {
-            const cb = el.querySelector('input');
-            cb.checked = !cb.checked;
+            const cb = el.querySelector('input'); cb.checked = !cb.checked;
             el.style.borderColor = cb.checked ? '#667eea' : '#eee';
             el.style.background = cb.checked ? '#f0f4ff' : 'white';
         }
 
         function handleUpload(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+            const file = e.target.files[0]; if (!file) return;
             document.getElementById('loading').classList.add('active');
             const reader = new FileReader();
             reader.onload = (event) => {
-                try {
-                    const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
-                    const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                    studentsData = json.map((r, i) => ({
-                        id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase()
-                    }));
-                    renderStudents();
-                } catch(err) { alert("Error parsing file."); }
-                document.getElementById('loading').classList.remove('active');
+                const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
+                const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                studentsData = json.map((r, i) => ({ id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase() }));
+                renderStudents(); document.getElementById('loading').classList.remove('active');
             };
             reader.readAsArrayBuffer(file);
         }
 
         function renderStudents() {
             const grid = document.getElementById('student-grid');
-            grid.innerHTML = studentsData.map(s => `
-                <div class="student-item" onclick="toggleStudent(this)">
-                    <div class="checkbox-container">
-                        <input type="checkbox" id="check-${s.id}" class="student-checkbox" value="${s.id}">
-                    </div>
-                    <div class="student-info-row">
-                        <span class="student-name">${s.name}</span>
-                        <span class="student-class">${s.class}</span>
-                    </div>
-                </div>`).join('');
+            grid.innerHTML = studentsData.map(s => `<div class="student-item" onclick="toggleStudent(this)"><div class="checkbox-container"><input type="checkbox" id="check-${s.id}" class="student-checkbox" value="${s.id}"></div><div class="student-info-row"><span class="student-name">${s.name}</span><span class="student-class">${s.class}</span></div></div>`).join('');
         }
 
-        function filterStudents(q) {
-            const term = q.toLowerCase();
-            document.querySelectorAll('.student-item').forEach(el => el.style.display = el.textContent.toLowerCase().includes(term) ? 'flex' : 'none');
-        }
-
+        function filterStudents(q) { const term = q.toLowerCase(); document.querySelectorAll('.student-item').forEach(el => el.style.display = el.textContent.toLowerCase().includes(term) ? 'flex' : 'none'); }
         function getDaySuffix(n) { if (n > 3 && n < 21) return 'th'; switch (n % 10) { case 1: return "st"; case 2: return "nd"; case 3: return "rd"; default: return "th"; } }
-        function formatDate(dStr) { 
-            const d = new Date(dStr); 
-            return isNaN(d) ? dStr : `${d.getDate()}${getDaySuffix(d.getDate())} ${d.toLocaleDateString('en-US',{month:'long'})}, ${d.getFullYear()}`; 
-        }
+        function formatDate(dStr) { const d = new Date(dStr); return isNaN(d) ? dStr : `${d.getDate()}${getDaySuffix(d.getDate())} ${d.toLocaleDateString('en-US',{month:'long'})}, ${d.getFullYear()}`; }
 
         async function triggerGeneration() {
             const selectedIds = Array.from(document.querySelectorAll('.student-checkbox:checked')).map(c => c.value);
             if (selectedIds.length === 0) return alert("Select students first.");
-            const tName = document.getElementById('global-teacher').value;
-            const subject = document.getElementById('global-subject').value;
-            const tTitle = document.getElementById('global-title').value;
+            const tName = document.getElementById('global-teacher').value, subject = document.getElementById('global-subject').value, tTitle = document.getElementById('global-title').value, tLevel = document.getElementById('global-level').value;
             if (!tName || !subject) return alert("Fill profile details.");
 
             document.getElementById('loading').classList.add('active');
-            const zip = new JSZip();
-            const { jsPDF } = window.jspdf;
+            const zip = new JSZip(), { jsPDF } = window.jspdf;
+            const img = new Image(); img.src = 'letterhead.png';
+            await new Promise(resolve => img.onload = resolve);
 
             for (const id of selectedIds) {
-                const s = studentsData[id];
-                const doc = new jsPDF('landscape');
-                const pMap = {
-                    name: s.name, t: s.gender === 'female' ? 'daughter' : 'son', p: s.gender === 'female' ? 'her' : 'his', P: s.gender === 'female' ? 'Her' : 'His',
-                    subj: s.gender === 'female' ? 'she' : 'he', Subj: s.gender === 'female' ? 'She' : 'He', obj: s.gender === 'female' ? 'her' : 'him', ref: s.gender === 'female' ? 'herself' : 'himself'
-                };
+                const s = studentsData[id], doc = new jsPDF('landscape', 'mm', 'a4');
+                const pMap = { name: s.name, t: s.gender === 'female' ? 'daughter' : 'son', p: s.gender === 'female' ? 'her' : 'his', P: s.gender === 'female' ? 'Her' : 'His', subj: s.gender === 'female' ? 'she' : 'he', Subj: s.gender === 'female' ? 'She' : 'He', obj: s.gender === 'female' ? 'her' : 'him', ref: s.gender === 'female' ? 'herself' : 'himself' };
                 const currentInputs = {};
                 templates[activeType].inputs.forEach(inp => currentInputs[inp.id] = document.getElementById(`${activeType}-${inp.id}`).value);
                 const bodyText = templates[activeType].getBody(pMap, currentInputs, { subject });
+
+                doc.addImage(img, 'PNG', 0, 0, 297, 210);
+                doc.setFontSize(12).text(`Date: ${formatDate(new Date())}`, 25, 40);
+
+                const letterTitle = templates[activeType].title.toUpperCase();
+                doc.setFont(undefined, 'bold').setFontSize(14);
+                const xTitle = (297 - doc.getTextWidth(letterTitle)) / 2;
+                doc.text(letterTitle, xTitle, 55);
+                doc.setLineWidth(0.5).line(xTitle, 56, xTitle + doc.getTextWidth(letterTitle), 56);
+
+                doc.setFont(undefined, 'bold').setFontSize(12).text(`Dear Parent of ${s.name} (${s.class}),`, 25, 70);
+                doc.setFont(undefined, 'normal').setFontSize(11).text(doc.splitTextToSize(bodyText, 250), 25, 85);
+
                 const gradeNum = parseInt(s.class) || 9;
                 const admin = gradeNum <= 8 ? "Mr. Gregory Lewis" : "Mr. Atiq Salakh Uddin";
+                const adminTitle = gradeNum <= 8 ? "Head of Boys (Gr 6 - 8)" : "Academic Head (Boys Gr 9 - 12)";
+                const teacherFullTitle = `${tLevel} ${subject} Teacher`;
 
-                doc.setFontSize(12).text(`Date: ${formatDate(new Date())}`, 25, 30);
-                doc.text(`Dear Parent of ${s.name} (${s.class}),`, 25, 50);
-                doc.setFontSize(11).text(doc.splitTextToSize(bodyText, 250), 25, 70);
-                doc.text(`${tTitle}. ${tName}`, 25, 170); doc.text(admin, 180, 170);
+                doc.setFont(undefined, 'bold').text(`${tTitle}. ${tName}`, 25, 170);
+                doc.text(admin, 180, 170);
+                doc.setFont(undefined, 'normal').setFontSize(10).text(teacherFullTitle, 25, 176).text(adminTitle, 180, 176);
+
                 zip.file(`${activeType.toUpperCase()}_${s.name}.pdf`, doc.output('blob'));
             }
-            const content = await zip.generateAsync({type:'blob'});
-            saveAs(content, `jks_letters_${activeType}.zip`);
+            saveAs(await zip.generateAsync({type:'blob'}), `jks_letters_${activeType}.zip`);
             document.getElementById('loading').classList.remove('active');
         }
-
         init();
     </script>
 </body>
