@@ -65,7 +65,7 @@
                 <h3>Step 1: Connect Student Data</h3>
                 <div class="instruction-text">
                     Please provide your student list. You can <strong>Drag and Drop</strong> your file directly into the box below, or <strong>click</strong> to select it from your computer. <br>
-                    <em>Note: The file must be in <strong>Excel format (.xlsx or .xls)</strong>.</em>
+                    <em>Note: The file must be in <strong>Excel format (.xlsx, .xls, or .csv)</strong>.</em>
                 </div>
                 <div id="drop-zone" class="drop-zone">
                     <label id="upload-label" style="cursor:pointer; margin-bottom:0; width:100%; display:block;">
@@ -173,37 +173,47 @@
                     const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
                     const sheet = wb.Sheets[wb.SheetNames[0]];
                     
-                    // Intelligent Header Discovery
+                    // Robust 2D Array Scanner (Bypasses offset row issues)
                     const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-                    let headerRowIndex = 0;
-                    for (let i = 0; i < Math.min(15, rawData.length); i++) {
-                        if (rawData[i] && rawData[i].some(cell => typeof cell === 'string' && (cell.toUpperCase().includes('FULL NAME') || cell.toUpperCase().includes('HOMEROOM')))) {
-                            headerRowIndex = i;
+                    let nameCol = -1, classCol = -1, startRow = -1;
+
+                    // Scan first 20 rows to find headers
+                    for (let i = 0; i < Math.min(20, rawData.length); i++) {
+                        if (!rawData[i]) continue;
+                        for (let j = 0; j < rawData[i].length; j++) {
+                            const cell = String(rawData[i][j] || "").toUpperCase().trim();
+                            if (cell.includes('NAME') && !cell.includes('ARABIC')) nameCol = j;
+                            if (cell.includes('HOMEROOM') || cell.includes('CLASS')) classCol = j;
+                        }
+                        if (nameCol !== -1 && classCol !== -1) {
+                            startRow = i + 1;
                             break;
                         }
                     }
 
-                    const json = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
-                    
-                    studentsData = json.map((r, i) => {
-                        const keys = Object.keys(r);
-                        const nameKey = keys.find(k => k.toUpperCase().trim() === "FULL NAME" || k.toUpperCase().trim() === "NAME") || "";
-                        const classKey = keys.find(k => k.toUpperCase().trim() === "HOMEROOM" || k.toUpperCase().trim() === "CLASS" || k.toUpperCase().trim() === "GRADE") || "";
+                    if (startRow === -1) throw new Error("Headers not found");
+
+                    studentsData = [];
+                    for (let i = startRow; i < rawData.length; i++) {
+                        const row = rawData[i];
+                        if (!row || row.length === 0) continue;
                         
-                        const className = String(r[classKey] || "N/A");
-                        // Derive gender from Homeroom string if missing
-                        const gender = (r.Gender || (className.toLowerCase().includes('girl') ? 'female' : 'male')).toLowerCase();
+                        const name = String(row[nameCol] || "").trim();
+                        if (!name || name === "undefined" || name.includes("STUDENT DATA")) continue;
+                        
+                        const className = String(row[classCol] || "N/A").trim();
+                        const gender = className.toLowerCase().includes('girl') ? 'female' : 'male';
+                        
+                        studentsData.push({ id: studentsData.length, name, class: className, gender });
+                    }
 
-                        return { id: i, name: r[nameKey] || "Unknown", class: className, gender: gender };
-                    }).filter(s => s.name !== "Unknown");
-
-                    if(studentsData.length === 0) throw new Error("No students found.");
+                    if (studentsData.length === 0) throw new Error("No valid student rows found");
 
                     renderStudents(); 
                     document.getElementById('upload-label').innerHTML = `✅ <strong>${file.name}</strong> loaded successfully!`;
                 } catch (err) { 
                     console.error(err);
-                    alert("Error: Please ensure the file is a valid Excel document containing 'FULL NAME' and 'HOMEROOM' columns."); 
+                    alert("Error: Could not read student names. Please ensure the file contains 'FULL NAME' and 'HOMEROOM' columns."); 
                 }
                 document.getElementById('loading').classList.remove('active');
             };
