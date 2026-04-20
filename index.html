@@ -25,10 +25,11 @@
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
         
-        /* Drag and Drop Upload Area */
+        /* Step 1 Instructions & Drop Zone */
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
-        .drop-zone { background: white; padding: 25px; border-radius: 8px; border: 2px dashed #667eea; text-align: center; transition: 0.3s; cursor: pointer; }
-        .drop-zone.drag-over { background: #e0e7ff; border-color: #3b49df; transform: scale(1.01); }
+        .instruction-text { font-size: 0.9em; color: #4a5568; margin-bottom: 12px; line-height: 1.4; }
+        .drop-zone { background: white; padding: 30px; border-radius: 8px; border: 2px dashed #667eea; text-align: center; transition: all 0.3s ease; cursor: pointer; }
+        .drop-zone.drag-over { background: #c3dafe; border-color: #3b49df; border-style: solid; transform: scale(1.02); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2); }
         
         .student-list-container { max-height: 400px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
         .student-item { display: flex; align-items: center; padding: 10px 15px; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
@@ -63,9 +64,13 @@
         <main>
             <div class="upload-section">
                 <h3>Step 1: Connect Student Data</h3>
-                <div id="drop-zone" class="drop-zone" style="margin-top:10px;">
-                    <label id="upload-label" style="cursor:pointer; margin-bottom:0;">
-                        🟢 <strong>Click to Upload</strong> or Drag & Drop classlist.xlsx here
+                <div class="instruction-text">
+                    Please provide your student list. You can <strong>Drag and Drop</strong> your file directly into the box below, or <strong>click</strong> to select it from your computer. <br>
+                    <em>Note: The file must be in <strong>Excel format (.xlsx or .xls)</strong>.</em>
+                </div>
+                <div id="drop-zone" class="drop-zone">
+                    <label id="upload-label" style="cursor:pointer; margin-bottom:0; width:100%; display:block;">
+                        <strong>Click to Upload</strong> or Drag & Drop Classlist Here
                         <input type="file" id="manual-upload" accept=".xlsx, .xls" style="display:none;">
                     </label>
                 </div>
@@ -73,7 +78,7 @@
             <div class="form-group" style="background:#f9f9f9; padding:20px; border-radius:10px;">
                 <label>Teacher Profile</label>
                 <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <select id="global-title" style="width:100px;"><option>Mr</option><option>Ms</option><option>Mrs</option></select>
+                    <select id="global-title" style="width:100px;"><option>Mr</option><option>Ms</option><option>Mrs</option><option>Miss</option></select>
                     <input type="text" id="global-teacher" placeholder="Full Name">
                     <input type="text" id="global-subject" placeholder="Subject">
                 </div>
@@ -84,7 +89,7 @@
                 <label>Step 2: Select Students</label>
                 <input type="text" class="filter-bar" placeholder="🔍 Filter list..." id="student-filter" style="width: 100%; padding: 12px; border: 2px solid #667eea; border-radius: 8px; margin-bottom: 5px;">
                 <span style="font-size: 0.85em; color: #666; margin-bottom: 15px; display: block; font-style: italic;">Search by name or class (e.g., "6.1")</span>
-                <div id="student-grid" class="student-list-container">Upload classlist to begin...</div>
+                <div id="student-grid" class="student-list-container">Connect classlist above to begin...</div>
             </div>
             <button class="btn-primary" onclick="triggerGeneration()">Generate All Selected Letters (.ZIP)</button>
         </main>
@@ -100,7 +105,7 @@
                 title: 'Incomplete Work', 
                 inputs: [
                     { id: 'type', label: 'Work Type', type: 'select', options: ['Homework', 'Classwork'] },
-                    { id: 'task', label: 'Task Name', type: 'text', placeholder: 'e.g. Science Cycle 3' },
+                    { id: 'task', label: 'Task Name', type: 'text', placeholder: 'e.g. English Essay' },
                     { id: 'due', label: 'Original Due Date', type: 'date' },
                     { id: 'newDate', label: 'Extension Date', type: 'date' }
                 ],
@@ -112,13 +117,13 @@
                 }
             },
             bunking: { title: 'Bunking Lesson', inputs: [{ id: 'date', label: 'Date', type: 'date' }, { id: 'period', label: 'Period #', type: 'number' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not attend period ${i.period} ${m.subject} lesson on ${formatDate(i.date)}. By choosing to bunk ${s.p} lesson/s, ${s.subj} has put ${s.ref} at risk, because ${s.subj} will not be easily accounted for in any emergency.` },
-            disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue, reinforcing that disruptive behavior is not what is expected from an MYP student.` },
-            unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook and pen' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
+            disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue.` },
+            unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook and pen' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}.` },
             absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction.` },
-            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school.` },
-            reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}. Please encourage your ${s.t} to attend the remaining sessions on ${i.fDates}.` },
-            performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}. All grades are accumulative and will negatively affect ${s.p} end of year grade.` },
-            commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. ${s.P} increased focus and commitment to the subject must be commended.` }
+            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions.` },
+            reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}.` },
+            performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}.` },
+            commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. Your ${s.t}'s increased focus is commended.` }
         };
 
         function init() {
@@ -143,18 +148,12 @@
                 container.appendChild(section);
             }
             
-            // Setup Drag & Drop
             const dropZone = document.getElementById('drop-zone');
             const fileInput = document.getElementById('manual-upload');
             
             dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
             dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-            dropZone.addEventListener('drop', (e) => {
-                e.preventDefault();
-                dropZone.classList.remove('drag-over');
-                const file = e.dataTransfer.files[0];
-                if (file) handleFile(file);
-            });
+            dropZone.addEventListener('drop', (e) => { e.preventDefault(); dropZone.classList.remove('drag-over'); if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
             fileInput.addEventListener('change', (e) => { if(e.target.files[0]) handleFile(e.target.files[0]); });
 
             document.getElementById('student-filter').addEventListener('keyup', (e) => filterStudents(e.target.value));
@@ -171,11 +170,13 @@
             document.getElementById('loading').classList.add('active');
             const reader = new FileReader();
             reader.onload = (event) => {
-                const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
-                const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                studentsData = json.map((r, i) => ({ id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase() }));
-                renderStudents(); 
-                document.getElementById('upload-label').innerHTML = `✅ <strong>${file.name}</strong> loaded successfully!`;
+                try {
+                    const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
+                    const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+                    studentsData = json.map((r, i) => ({ id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase() }));
+                    renderStudents(); 
+                    document.getElementById('upload-label').innerHTML = `✅ <strong>${file.name}</strong> loaded successfully!`;
+                } catch (err) { alert("Error: Please ensure the file is a valid Excel document."); }
                 document.getElementById('loading').classList.remove('active');
             };
             reader.readAsArrayBuffer(file);
