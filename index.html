@@ -58,6 +58,7 @@
             <button class="nav-btn" data-type="copybook">Copybook</button>
             <button class="nav-btn" data-type="reinforcement">Reinforcement</button>
             <button class="nav-btn" data-type="performance">Performance</button>
+            <button class="nav-btn" data-type="retake">Retake Quiz</button>
             <button class="nav-btn" data-type="commendation">Commendation</button>
         </nav>
         <main>
@@ -122,6 +123,15 @@
             copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions.` },
             reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}.` },
             performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}.` },
+            retake: { 
+                title: 'Retake Quiz', 
+                inputs: [
+                    { id: 'task', label: 'Quiz Name', type: 'text', placeholder: 'e.g. Science Chapter 4' },
+                    { id: 'score', label: 'Score Received', type: 'text', placeholder: 'e.g. 50%' },
+                    { id: 'rDate', label: 'Retake Date', type: 'date' }
+                ], 
+                getBody: (s, i, m) => `Please be informed that your ${s.t} has received a score of ${i.score} in the ${i.task} assessment for ${m.subject}. A retake quiz has been scheduled for ${formatDate(i.rDate)} to support ${s.obj} in these concepts. Please encourage your child to come prepared and to study for the retake to avoid any negative impact on ${s.p} grade, as this will affect ${s.p} end-of-year final grade and/or GPA.` 
+            },
             commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. Your ${s.t}'s increased focus is commended.` }
         };
 
@@ -173,11 +183,9 @@
                     const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
                     const sheet = wb.Sheets[wb.SheetNames[0]];
                     
-                    // Robust 2D Array Scanner (Bypasses offset row issues)
                     const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
                     let nameCol = -1, classCol = -1, startRow = -1;
 
-                    // Scan first 20 rows to find headers
                     for (let i = 0; i < Math.min(20, rawData.length); i++) {
                         if (!rawData[i]) continue;
                         for (let j = 0; j < rawData[i].length; j++) {
