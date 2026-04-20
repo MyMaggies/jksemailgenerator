@@ -25,7 +25,6 @@
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
         
-        /* Step 1 Instructions & Drop Zone */
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
         .instruction-text { font-size: 0.9em; color: #4a5568; margin-bottom: 12px; line-height: 1.4; }
         .drop-zone { background: white; padding: 30px; border-radius: 8px; border: 2px dashed #667eea; text-align: center; transition: all 0.3s ease; cursor: pointer; }
@@ -71,7 +70,7 @@
                 <div id="drop-zone" class="drop-zone">
                     <label id="upload-label" style="cursor:pointer; margin-bottom:0; width:100%; display:block;">
                         <strong>Click to Upload</strong> or Drag & Drop Classlist Here
-                        <input type="file" id="manual-upload" accept=".xlsx, .xls" style="display:none;">
+                        <input type="file" id="manual-upload" accept=".xlsx, .xls, .csv" style="display:none;">
                     </label>
                 </div>
             </div>
@@ -172,11 +171,40 @@
             reader.onload = (event) => {
                 try {
                     const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
-                    const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                    studentsData = json.map((r, i) => ({ id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase() }));
+                    const sheet = wb.Sheets[wb.SheetNames[0]];
+                    
+                    // Intelligent Header Discovery
+                    const rawData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+                    let headerRowIndex = 0;
+                    for (let i = 0; i < Math.min(15, rawData.length); i++) {
+                        if (rawData[i] && rawData[i].some(cell => typeof cell === 'string' && (cell.toUpperCase().includes('FULL NAME') || cell.toUpperCase().includes('HOMEROOM')))) {
+                            headerRowIndex = i;
+                            break;
+                        }
+                    }
+
+                    const json = XLSX.utils.sheet_to_json(sheet, { range: headerRowIndex });
+                    
+                    studentsData = json.map((r, i) => {
+                        const keys = Object.keys(r);
+                        const nameKey = keys.find(k => k.toUpperCase().trim() === "FULL NAME" || k.toUpperCase().trim() === "NAME") || "";
+                        const classKey = keys.find(k => k.toUpperCase().trim() === "HOMEROOM" || k.toUpperCase().trim() === "CLASS" || k.toUpperCase().trim() === "GRADE") || "";
+                        
+                        const className = String(r[classKey] || "N/A");
+                        // Derive gender from Homeroom string if missing
+                        const gender = (r.Gender || (className.toLowerCase().includes('girl') ? 'female' : 'male')).toLowerCase();
+
+                        return { id: i, name: r[nameKey] || "Unknown", class: className, gender: gender };
+                    }).filter(s => s.name !== "Unknown");
+
+                    if(studentsData.length === 0) throw new Error("No students found.");
+
                     renderStudents(); 
                     document.getElementById('upload-label').innerHTML = `✅ <strong>${file.name}</strong> loaded successfully!`;
-                } catch (err) { alert("Error: Please ensure the file is a valid Excel document."); }
+                } catch (err) { 
+                    console.error(err);
+                    alert("Error: Please ensure the file is a valid Excel document containing 'FULL NAME' and 'HOMEROOM' columns."); 
+                }
                 document.getElementById('loading').classList.remove('active');
             };
             reader.readAsArrayBuffer(file);
