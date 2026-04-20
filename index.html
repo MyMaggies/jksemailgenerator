@@ -24,9 +24,15 @@
         .form-group { margin-bottom: 20px; }
         label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; }
         input, select, textarea { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 1em; }
+        
+        /* Drag and Drop Upload Area */
         .upload-section { background: #f0f4ff; padding: 20px; border-radius: 8px; margin-bottom: 25px; border-left: 5px solid #667eea; }
+        .drop-zone { background: white; padding: 25px; border-radius: 8px; border: 2px dashed #667eea; text-align: center; transition: 0.3s; cursor: pointer; }
+        .drop-zone.drag-over { background: #e0e7ff; border-color: #3b49df; transform: scale(1.01); }
+        
         .student-list-container { max-height: 400px; overflow-y: auto; border: 2px solid #ddd; border-radius: 8px; background: #fafafa; padding: 10px; }
         .student-item { display: flex; align-items: center; padding: 10px 15px; background: white; border: 1px solid #eee; border-radius: 8px; margin-bottom: 6px; cursor: pointer; }
+        .student-item:hover { background: #f8f9ff; border-color: #667eea; }
         .checkbox-container { width: 40px; display: flex; justify-content: center; }
         .student-item input[type="checkbox"] { transform: scale(1.3); pointer-events: none; }
         .student-info-row { display: flex; align-items: center; justify-content: space-between; flex: 1; padding-left: 10px; }
@@ -57,9 +63,11 @@
         <main>
             <div class="upload-section">
                 <h3>Step 1: Connect Student Data</h3>
-                <div style="background: white; padding: 15px; border-radius: 8px; border: 1px dashed #667eea; margin-top: 10px;">
-                    <label>Manual Excel Upload</label>
-                    <input type="file" id="manual-upload" accept=".xlsx, .xls">
+                <div id="drop-zone" class="drop-zone" style="margin-top:10px;">
+                    <label id="upload-label" style="cursor:pointer; margin-bottom:0;">
+                        🟢 <strong>Click to Upload</strong> or Drag & Drop classlist.xlsx here
+                        <input type="file" id="manual-upload" accept=".xlsx, .xls" style="display:none;">
+                    </label>
                 </div>
             </div>
             <div class="form-group" style="background:#f9f9f9; padding:20px; border-radius:10px;">
@@ -107,7 +115,7 @@
             disruption: { title: 'Disruptive Behaviour', inputs: [], getBody: (s, i, m) => `It is with concern we draw your attention to your ${s.t}’s constant disruption in the ${m.subject} class. This disruption is impacting ${s.p} learning and the learning of others. We urge you to discuss the matter with your ${s.t} regarding this issue, reinforcing that disruptive behavior is not what is expected from an MYP student.` },
             unprepared: { title: 'Unprepared for Class', inputs: [{ id: 'items', label: 'Missing Equipment', type: 'text', placeholder: 'copybook and pen' }], getBody: (s, i, m) => `Kindly be informed that, despite repeated reminders, your ${s.t} has consistently attended ${m.subject} lesson unequipped with the necessary ${i.items}. This has the potential to adversely affect ${s.p} grades and GPA.` },
             absence: { title: 'Frequent Absence', inputs: [{ id: 'days', label: 'Days Missed', type: 'number' }, { id: 'quarter', label: 'Quarter', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} has been frequently absent from ${m.subject} class. Since the start of ${i.quarter}, ${s.subj} has missed ${i.days} days of instruction.` },
-            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school and use it consistently for assessment and feedback.` },
+            copybook: { title: 'Lost Copybook', inputs: [{ id: 'count', label: 'Times Lost', type: 'number' }], getBody: (s, i, m) => `Please be advised that your ${s.t} has lost ${s.p} ${m.subject} exercise book on at least ${i.count} separate occasions. Kindly encourage your ${s.t} to always bring ${s.p} copy book to school.` },
             reinforcement: { title: 'Reinforcement Session', inputs: [{ id: 'sDate', label: 'Session Date', type: 'date' }, { id: 'fDates', label: 'Future Dates', type: 'text' }], getBody: (s, i, m) => `Kindly note that your ${s.t} failed to attend a pre-scheduled ${m.subject} reinforcement session on ${formatDate(i.sDate)}. Please encourage your ${s.t} to attend the remaining sessions on ${i.fDates}.` },
             performance: { title: 'Academic Performance', inputs: [{ id: 'task', label: 'Task Name', type: 'text' }, { id: 'score', label: 'Score', type: 'text' }], getBody: (s, i, m) => `Kindly be informed that your ${s.t} did not perform as expected in the ${i.task} assessment, receiving a score of ${i.score}. All grades are accumulative and will negatively affect ${s.p} end of year grade.` },
             commendation: { title: 'Commendation', inputs: [], getBody: (s, i, m) => `We are pleased to inform you that ${s.name.split(' ')[0]} has shown a pleasing improvement in ${m.subject}. ${s.P} increased focus and commitment to the subject must be commended.` }
@@ -134,7 +142,21 @@
                 section.innerHTML = `<h2>${cfg.title} Details</h2>${inputsHtml}`;
                 container.appendChild(section);
             }
-            document.getElementById('manual-upload').addEventListener('change', handleUpload);
+            
+            // Setup Drag & Drop
+            const dropZone = document.getElementById('drop-zone');
+            const fileInput = document.getElementById('manual-upload');
+            
+            dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                const file = e.dataTransfer.files[0];
+                if (file) handleFile(file);
+            });
+            fileInput.addEventListener('change', (e) => { if(e.target.files[0]) handleFile(e.target.files[0]); });
+
             document.getElementById('student-filter').addEventListener('keyup', (e) => filterStudents(e.target.value));
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -145,23 +167,24 @@
             });
         }
 
-        function toggleStudent(el) {
-            const cb = el.querySelector('input'); cb.checked = !cb.checked;
-            el.style.borderColor = cb.checked ? '#667eea' : '#eee';
-            el.style.background = cb.checked ? '#f0f4ff' : 'white';
-        }
-
-        function handleUpload(e) {
-            const file = e.target.files[0]; if (!file) return;
+        function handleFile(file) {
             document.getElementById('loading').classList.add('active');
             const reader = new FileReader();
             reader.onload = (event) => {
                 const wb = XLSX.read(new Uint8Array(event.target.result), {type:'array'});
                 const json = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
                 studentsData = json.map((r, i) => ({ id: i, name: r['FULL NAME'] || r.Name || "Unknown", class: String(r.HOMEROOM || r.Class || "N/A"), gender: (r.Gender || 'male').toLowerCase() }));
-                renderStudents(); document.getElementById('loading').classList.remove('active');
+                renderStudents(); 
+                document.getElementById('upload-label').innerHTML = `✅ <strong>${file.name}</strong> loaded successfully!`;
+                document.getElementById('loading').classList.remove('active');
             };
             reader.readAsArrayBuffer(file);
+        }
+
+        function toggleStudent(el) {
+            const cb = el.querySelector('input'); cb.checked = !cb.checked;
+            el.style.borderColor = cb.checked ? '#667eea' : '#eee';
+            el.style.background = cb.checked ? '#f0f4ff' : 'white';
         }
 
         function renderStudents() {
@@ -191,34 +214,23 @@
                 templates[activeType].inputs.forEach(inp => currentInputs[inp.id] = document.getElementById(`${activeType}-${inp.id}`).value);
                 const bodyText = templates[activeType].getBody(pMap, currentInputs, { subject });
 
-                // Add Letterhead Background
                 doc.addImage(img, 'PNG', 0, 0, 297, 210);
-                
-                // 1. Position Date (Shifted Down to 65mm)
                 doc.setFontSize(12).setFont(undefined, 'normal').text(`Date: ${formatDate(new Date())}`, 25, 65);
 
-                // 2. Centered Title (Bold, Underlined, Positioned at 80mm)
                 const letterTitle = templates[activeType].title.toUpperCase();
                 doc.setFont(undefined, 'bold').setFontSize(14);
-                const titleWidth = doc.getTextWidth(letterTitle);
-                const xTitle = (297 - titleWidth) / 2;
+                const xTitle = (297 - doc.getTextWidth(letterTitle)) / 2;
                 doc.text(letterTitle, xTitle, 80);
-                doc.setLineWidth(0.5).line(xTitle, 81, xTitle + titleWidth, 81);
+                doc.setLineWidth(0.5).line(xTitle, 81, xTitle + doc.getTextWidth(letterTitle), 81);
 
-                // 3. Greeting (Shifted Down to 95mm)
                 doc.setFont(undefined, 'bold').setFontSize(12).text(`Dear Parent of ${s.name} (${s.class}),`, 25, 95);
-
-                // 4. Body (Shifted Down to 110mm, Dynamically Measures Height)
                 doc.setFont(undefined, 'normal').setFontSize(11);
                 const bodyLines = doc.splitTextToSize(bodyText, 250);
                 doc.text(bodyLines, 25, 110);
 
-                // Dynamic Signature Placement (20mm below body text)
-                const lineHeight = 11 * 0.3528; // mm per line
-                const totalBodyHeight = bodyLines.length * lineHeight;
+                const totalBodyHeight = bodyLines.length * (11 * 0.3528);
                 const sigY = 110 + totalBodyHeight + 20;
 
-                // 5. Signatures (Follows Text)
                 const gradeNum = parseInt(s.class) || 9;
                 const admin = gradeNum <= 8 ? "Mr. Gregory Lewis" : "Mr. Atiq Salakh Uddin";
                 const adminTitle = gradeNum <= 8 ? "Head of Boys (Gr 6 - 8)" : "Academic Head (Boys Gr 9 - 12)";
@@ -226,9 +238,7 @@
 
                 doc.setFont(undefined, 'bold').text(`${tTitle}. ${tName}`, 25, sigY);
                 doc.text(admin, 180, sigY);
-                doc.setFont(undefined, 'normal').setFontSize(10);
-                doc.text(teacherFullTitle, 25, sigY + 6);
-                doc.text(adminTitle, 180, sigY + 6);
+                doc.setFont(undefined, 'normal').setFontSize(10).text(teacherFullTitle, 25, sigY + 6).text(adminTitle, 180, sigY + 6);
 
                 zip.file(`${activeType.toUpperCase()}_${s.name}.pdf`, doc.output('blob'));
             }
